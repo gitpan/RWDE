@@ -21,6 +21,9 @@ use base qw(RWDE::RObject RWDE::Doxy::DocGenerator);
 
 our (%fields, %static_fields, %modifiable_fields, @fieldnames, @static_fieldnames, @modifiable_fieldnames);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 BEGIN {
 
   #all of the static fields present in the list table

@@ -1,7 +1,7 @@
 ## @file
 # (Enter your file info here)
 #
-# $Id: Time.pm 498 2008-08-22 15:35:28Z kamelkev $
+# $Id: Time.pm 505 2008-09-08 23:21:58Z kamelkev $
 
 ## @class RWDE::Time
 # (Enter RWDE::Time info here)
@@ -14,6 +14,9 @@ use RWDE::DB::Record;
 use RWDE::DB::DefaultDB;
 
 use base qw(RWDE::DB::DefaultDB RWDE::DB::Record);
+
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
 
 ## @method object fetch_time($interval, $timestamp)
 # (Enter fetch_time info here)

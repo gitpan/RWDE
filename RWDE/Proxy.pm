@@ -5,14 +5,17 @@ use warnings;
 
 use RWDE::AbstractFactory;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 =pod
+
 =head1 RWDE::Proxy
 
 Proxy object for getting the specific functionality of a particular object
 
 =cut
 
-=pod
 =head2 invoke({ class => class_name, function => function_name, params => function_params})
 
 To avoid require, eval and invocation from within a block of code, which is suboptimal, 

@@ -1,9 +1,10 @@
 package RWDE::DB::Immutable;
 
-
-
 use strict;
 use warnings;
+
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
 
 sub update_record {
   my ($self, $params) = @_;

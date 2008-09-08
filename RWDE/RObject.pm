@@ -11,10 +11,13 @@ use RWDE::Exceptions;
 use base qw(RWDE::Logging);
 
 use vars qw($AUTOLOAD);
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
 
 our (%_validators);
 
 =pod
+
 =head1 RWDE::RObject
 
 Base class for various records
@@ -34,7 +37,6 @@ BEGIN {
   );
 }
 
-=pod
 =head2 new()
 
 =cut
@@ -62,7 +64,6 @@ sub new() {
   return $self;
 }
 
-=pod
 =head2 is_instance()
 
 Determine if this reference instance of a class
@@ -75,7 +76,6 @@ sub is_instance {
   return ref($self) ? 1 : 0;
 }
 
-=pod
 =head2 check_object()
 
 Verify that this reference is an object.
@@ -97,7 +97,6 @@ sub check_object {
   return ();
 }
 
-=pod
 =head2 field_desc($fn)
 
 Get the field description stored within the object for the param $fn.
@@ -111,7 +110,6 @@ sub field_desc {
   return (exists $self->{_fields}->{$fn} ? $self->{_fields}->{$fn}[1] : $fn);
 }
 
-=pod
 =head2 field_type($fn)
 
 Get the field type stored within the object for the param $fn.
@@ -125,7 +123,6 @@ sub field_type {
   return $self->{_fields}->{$fn}[0];
 }
 
-=pod
 =head2 FIELDNAME
 
 All field names of the record are accessible via the field name.  If a
@@ -196,7 +193,6 @@ sub FIELDNAME {
   return $self->{_data}->{$fn};
 }
 
-=pod
 =head2 validate_email()
 
 Check the syntactical format of an email address to reduce risk of
@@ -237,7 +233,6 @@ sub validate_email {
   return ();
 }
 
-=pod
 =head2 validate_ip()
 
 Check the syntactical format of an ip address to reduce risk of
@@ -269,7 +264,6 @@ sub validate_ip {
   return;
 }
 
-=pod
 =head2 validate_boolean()
 
 Check to make sure that any of the accepted variations on a boolean is present.
@@ -295,7 +289,6 @@ sub validate_boolean {
   return;
 }
 
-=pod
 =head2 DESTROY()
 
 Do nothing. Here just to shut up TT when AUTOLOAD is present
@@ -306,7 +299,6 @@ sub DESTROY {
 
 }
 
-=pod
 =head2 display()
 
 =cut
@@ -325,7 +317,6 @@ sub display {
   return ();
 }
 
-=pod
 =head2 AUTOLOAD()
 
 All field names of the record are accessible via the field name.  If a
@@ -353,7 +344,6 @@ sub AUTOLOAD {
   return $self->FIELDNAME($AUTOLOAD, @args);
 }
 
-=pod
 =head2 copy_record()
 
 Copy a source record over top of this object.
@@ -384,7 +374,6 @@ sub copy_record {
   return;
 }
 
-=pod
 =head2 fill()
 
 Fill an object with data specified in the params hash. If the params hash does not have
@@ -409,7 +398,6 @@ sub fill {
   return;
 }
 
-=pod
 =head2 fill_required()
 
 This function takes the required array of elements, populates the current object and notifies if there are any missing elements
@@ -436,7 +424,6 @@ sub fill_required {
   return ();
 }
 
-=pod
 =head2 fill_optional()
 
 This function takes the required array of elements, populates the current object and notifies if there are any missing elements
@@ -457,7 +444,6 @@ sub fill_optional {
   return ();
 }
 
-=pod
 =head2 get_id()
 
 Get the id value present in this classes id_name
@@ -472,7 +458,6 @@ sub get_id {
   return $self->$id_name;
 }
 
-=pod
 =head2 get_id_name()
 
 Get the id_name stored within the class
@@ -485,7 +470,6 @@ sub get_id_name {
   return $self->get_static({ value => '_id' });
 }
 
-=pod
 =head2 fetch_by_id()
 
 =cut
@@ -502,7 +486,6 @@ sub fetch_by_id {
   return $term->_fetch_by_id({ $term->get_id_name() => $$params{ $term->get_id_name() } });
 }
 
-=pod
 =head2 _fetch_by_id()
 
 =cut
@@ -513,7 +496,6 @@ sub _fetch_by_id {
   return $self->__fetch_by_id($params);
 }
 
-=pod
 =head2 get_static()
 
 =cut
@@ -536,7 +518,6 @@ sub get_static {
   return $value;
 }
 
-=pod
 =head2 check_params()
 
 Verify that all fields specified in the required array are present within the params

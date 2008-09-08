@@ -5,6 +5,9 @@ use warnings;
 
 use Cache::Memcached;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
+
 sub new {
   my ($class, $params) = @_;
 

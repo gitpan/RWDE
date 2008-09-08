@@ -5,6 +5,9 @@ use warnings;
 
 # Proxy object for getting the specific functionality of a particular object
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 use Error qw(:try);
 use RWDE::Exceptions;
 

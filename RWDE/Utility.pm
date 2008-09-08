@@ -6,6 +6,10 @@ use strict;
 use warnings;
 
 use base qw(RWDE::Logging);
+
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 =pod  
 
 =head2 commify()

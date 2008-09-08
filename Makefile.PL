@@ -1,5 +1,5 @@
 #! /usr/pkg/bin/perl
-# $Id: Makefile.PL 504 2008-09-08 16:14:42Z kamelkev $
+# $Id: Makefile.PL 510 2008-09-08 23:43:18Z kamelkev $
 use ExtUtils::MakeMaker;
 WriteMakefile(
 	      NAME => 'RWDE',
@@ -29,8 +29,8 @@ WriteMakefile(
 		  'YAML' => 0,
 	      },
 	      dist => {
-		  PREOP => 'pod2text RWDE/RWDE.pm > README',
+		  PREOP => 'pod2text RWDE.pm > README',
 	      },
 #	      EXE_FILES => [ 'bin/tpage', 'bin/ttree' ],
-	      VERSION => sprintf "%d", q$Revision: 504 $ =~ /(\d+)/
+	      VERSION => sprintf "%d", q$Revision: 510 $ =~ /(\d+)/
 	      );

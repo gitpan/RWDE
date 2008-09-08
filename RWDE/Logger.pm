@@ -11,14 +11,17 @@ use RWDE::Exceptions;
 
 our ($debug, $syslog_socket);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 =pod
+
 =head1 RWDE::Logger
 
 Provides methods to log via syslog
 
 =cut
 
-=pod
 =head2 set_debug()
 
 Method to enable debug mode 
@@ -30,7 +33,6 @@ sub set_debug {
   return;
 }
 
-=pod
 =head2 toggle_debug()
 
 Method to toggle debug mode
@@ -42,7 +44,6 @@ sub toggle_debug {
   return;
 }
 
-=pod
 =head2 is_debug()
 
 Determine if debug mode is currently set
@@ -53,7 +54,6 @@ sub is_debug {
   return $debug;
 }
 
-=pod
 =head2 _init_syslog()
 
 Private Method
@@ -79,7 +79,6 @@ sub _init_syslog {
   return ();
 }
 
-=pod
 =head2 syslog_msg()
 
 Log a message to syslog via the established syslog connection
@@ -131,10 +130,9 @@ sub syslog_msg {
   return;
 }
 
-=pod
 =head2 debug_info()
 
-take the type and the human readable message and print it to STDERR if debug is on
+Take the type and the human readable message and print it to STDERR if debug is on
 
 =cut
 

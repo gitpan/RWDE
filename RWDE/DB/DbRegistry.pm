@@ -26,6 +26,9 @@ use base qw(RWDE::Singleton);
 our (%dbh, %prepared_transactions, $transaction_connection, $transaction_sequence, $db_settings_ref, $DB_CONFIG, $DB_CONNECTIONS, $impose_transaction);
 our ($unique_instance);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
+
 ## @method object get_instance()
 # Retrieve the registry instance
 # @return retrieved registry instance

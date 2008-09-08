@@ -9,4 +9,7 @@ use warnings;
 
 use base qw(RWDE::Mapper);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 1;

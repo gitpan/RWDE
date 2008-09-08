@@ -12,6 +12,9 @@ use RWDE::Exceptions;
 
 use base qw(RWDE::Logging);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 sub Start {
   my ($self, $params) = @_;
 

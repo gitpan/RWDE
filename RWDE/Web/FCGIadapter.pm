@@ -14,6 +14,9 @@ use base qw(CGI RWDE::Web::CGIadapter);
 
 our($Ext_Request);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 # workaround for known bug in libfcgi
 while ((my $ignore) = each %ENV) { }
 

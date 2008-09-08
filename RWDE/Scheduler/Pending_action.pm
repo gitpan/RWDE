@@ -15,6 +15,9 @@ use base qw(RWDE::DB::Record);
 
 our ($db, $table, $index, $id, @fieldnames, @modifiable_fieldnames, %fields, %static_fields, %modifiable_fields, @static_fieldnames);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 BEGIN {
   $table = 'pending_actions';
   $id    = 'action_id';

@@ -29,6 +29,9 @@ use base qw(RWDE::DB::Deletable RWDE::DB::Record RWDE::Runnable);
 
 our ($db, $table, $index, $id, @fieldnames, $ccrcontext, %fields, %static_fields, %modifiable_fields, @static_fieldnames, @modifiable_fieldnames);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 BEGIN {
   $table = 'schedulers';
   $id    = 'scheduler_id';

@@ -3,6 +3,9 @@ package RWDE::DB::Deletable;
 use strict;
 use warnings;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
+
 =pod
 
 =head2 delete_record()

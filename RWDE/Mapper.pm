@@ -6,8 +6,11 @@ use warnings;
 use RWDE::Gearman::Client;
 
 use vars qw($AUTOLOAD);
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
 
 =pod
+
 =head1 RWDE::Mapper
 
 Object to handle mapping of RPC namespaces. The mapping object translates the call from 
@@ -19,7 +22,6 @@ these circumstances, so some care is needed while implementing these types of ca
 
 =cut
 
-=pod
 =head2 AUTOLOAD
 
 Object to handle mapping of namespaces. The mapping object translates the call from 

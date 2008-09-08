@@ -1,4 +1,3 @@
-# Base object to add methods for CCR verification
 package RWDE::CCR;
 
 use strict;
@@ -6,13 +5,17 @@ use warnings;
 
 use Digest::MD5 qw(md5_hex);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 =pod
+
 =head1 RWDE::CCR
 
+Base object to add methods for CCR verification
 
 =cut
 
-=pod
 =head2 get_ccrcontext()
 
 Return back the class declared ccrcontext if it exists, otherwise generate one from the class name.
@@ -40,7 +43,6 @@ sub get_ccrcontext {
   return $ccrcontext;
 }
 
-=pod
 =head2 fetch_by_id()
 
 This method is a macro for fetching a single record from the database using either id.enc or ccr. 
@@ -76,7 +78,6 @@ sub fetch_by_id {
   return $term->_fetch_by_id({ $term->get_id_name() => $id });
 }
 
-=pod
 =head2 append_ccr($integer[,$context])
 
 Append the check-character to the integer and return the result.
@@ -100,7 +101,6 @@ sub append_ccr {
   return $code . $ccr;
 }
 
-=pod
 =head2 verify_ccr($string[,$context])
 
 Compares the check-character (last character) of C<$string> to a new
@@ -127,7 +127,6 @@ sub verify_ccr {
   return $check eq _compute_ccr($str, $context) ? $str : undef;
 }
 
-=pod
 =head2 _compute_ccr($string[,$context])
 
 Internal routine to do the math to compute the Character Checksum characteR
@@ -163,12 +162,17 @@ sub _compute_ccr {
   return chr(ord('A') + $c);
 }
 
-# Method to do the math to compute the MD5 checksum for a string, and
-# return the last 8 characters to use as a "security" code for
-# verifying some data.
-#
-# The $context parameter acts as a salt to change the code based on context
-# such as owner ID, user ID, etc.
+=head2 ccr_to_id($string)
+
+Method to do the math to compute the MD5 checksum for a string, and
+return the last 8 characters to use as a "security" code for
+verifying some data.
+
+The $context parameter acts as a salt to change the code based on context
+such as owner ID, user ID, etc.
+
+=cut
+
 sub compute_security_code {
   my $self    = shift;
   my $s       = shift;
@@ -177,11 +181,10 @@ sub compute_security_code {
   return substr(md5_hex($context, $s), -8);
 }
 
-=pod 
 =head2 ccr_to_id($string)
 
 Convert the string to an id number.  Returns undef on failure.
-  
+
 =cut
 
 sub ccr_to_id {
@@ -201,11 +204,10 @@ sub ccr_to_id {
   return $string;
 }
 
-=pod
 =head2 get_ccr()
 
 Returns the encoded value of the derived objects id
-  
+
 =cut
 
 sub get_ccr {
@@ -223,7 +225,6 @@ sub get_ccr {
   return $self->{ccr};
 }
 
-=pod
 =head2 encode($string)
 
 Returns the value with CCR appended and a hash both based on
@@ -234,7 +235,7 @@ string may B<not> contain a dash (-) or comma character.
 This produces a shorter encoded result without funny characters in it
 that may cause the longer form to break, so is useful for creating
 links that people may need to cut-and-paste.
-  
+
 =cut
 
 sub encode {
@@ -245,11 +246,10 @@ sub encode {
   return "$val-" . $self->compute_security_code($val, $self->get_ccrcontext);
 }
 
-=pod
 =head2 get_enc()
 
 Returns the encoded value of the derived objects id
-  
+
 =cut
 
 sub get_enc {
@@ -260,12 +260,11 @@ sub get_enc {
   return $self->{enc};
 }
 
-=pod
 =head2 decode($encodedString)
 
 Return the value decoded from the return value of the encode method.  
 Throws 'undef' exception if fails.
-  
+
 =cut
 
 sub decode ($) {
@@ -288,7 +287,6 @@ sub decode ($) {
 }
 
 
-=pod
 =head2 get_ccr_name()
 
 Determine the exact label used within the object for storing the ccr value. By convention it's a variation
@@ -306,7 +304,6 @@ sub get_ccr_name {
   return $id_name;
 }
 
-=pod
 =head2 get_enc_name()
 
 Determine the exact label used within the object for storing the enc value. By convention it's a variation
@@ -323,7 +320,5 @@ sub get_enc_name {
 
   return $id_name;
 }
-
-
 
 1;

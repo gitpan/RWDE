@@ -3,8 +3,6 @@
 # 
 # $Id: S3.pm 432 2008-05-02 19:17:09Z damjan $
 
-
-
 # sample usage:
 # my $response;
 # my $s3 = RWDE::DB::S3->new($AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY);
@@ -32,6 +30,9 @@ use HTTP::Date;
 use MIME::Base64 qw(encode_base64);
 
 use RWDE::Configuration; 
+
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
 
 ## @cmethod object new()
 # (Enter new info here)

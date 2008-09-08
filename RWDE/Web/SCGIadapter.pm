@@ -11,6 +11,9 @@ use RWDE::Exceptions;
 
 use base qw(RWDE::Web::CGIadapter);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 sub new {
   my ($proto, $params) = @_;
 

@@ -5,15 +5,16 @@ use warnings;
 
 use RWDE::Logger;
 
-=pod
-=head1 RWDE::Logging
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
 
+=pod
+
+=head1 RWDE::Logging
 
 =cut
 
-=pod
 =head2 syslog_msg()
-
 
 =cut
 
@@ -23,9 +24,7 @@ sub syslog_msg {
   return RWDE::Logger->syslog_msg($type, $info);
 }
 
-=pod
 =head2 debug_info()
-
 
 =cut
 
@@ -35,9 +34,7 @@ sub debug_info {
   return RWDE::Logger->debug_info($type, $info);
 }
 
-=pod
 =head2 is_debug()
-
 
 =cut
 

@@ -14,7 +14,11 @@ use RWDE::RObject;
 
 my $unique_instance;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 =pod
+
 =head1 RWDE::Postmaster
 
 This class implements methods that detail the sending of email. Both verp and standard emailing are implemented here, as 
@@ -22,7 +26,6 @@ well as methods for automatically reporting exceptions and hooks for assigning t
 
 =cut
 
-=pod
 =head2 get_instance()
 
 Return an instance of RWDE::Postmaster
@@ -39,12 +42,12 @@ sub get_instance {
   return $unique_instance;
 }
 
-=pod
 =head2 initialize()
 
 Initialize an instance of RWDE::Postmaster. This includes pulling some data from the config file in order to find an
 SMTP server and preparing to handle a mail template.
 
+=cut
 =cut
 
 sub initialize {
@@ -67,8 +70,6 @@ sub initialize {
 
   return ();
 }
-
-=pod
 
 =head2 send_message ($smtp_sender, $smtp_recipient, $template)
 
@@ -118,7 +119,6 @@ sub send_message {
   return ();
 }
 
-=pod
 =head2 send_verp_message($smtp_sender, $recipients, $template)
 
 Prepare or send a 1-to-many message to all the addresses contained within $recipients, from $smtp_sender address, using $template as a template input
@@ -174,7 +174,6 @@ sub send_verp_message {
   return \@good_recipients;
 }
 
-=pod
 =head2 send_support_message($topic, $question)
 
 Prepare or send a message to the support queue requested within $topic, from a Sender (specified in config file) using support.tt as a template input.
@@ -207,7 +206,6 @@ sub send_support_message {
   return ();
 }
 
-=pod
 =head2 send_report_message($topic, $question, $template)
 
 Prepare or send a message to the ErrorReport address specified in the config file, from Sender - also specified in the config file.

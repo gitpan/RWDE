@@ -12,14 +12,15 @@ our $unique_instance;
 our (@fieldnames, %fields, %static_fields, %modifiable_fields, @static_fieldnames, @modifiable_fieldnames);
 
 use vars qw($AUTOLOAD);
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
 
 =pod
-=head1 RWDE::Configuration
 
+=head1 RWDE::Configuration
 
 =cut
 
-=pod
 =head2 get_instance()
 
 Get an instance of the Configuration sans content. You will need an initialized Configuration
@@ -39,7 +40,6 @@ sub get_instance {
   return $unique_instance;
 }
 
-=pod
 =head2 initialize()
 
 Load the content from within the project configuration file via Configuration_content
@@ -56,7 +56,6 @@ sub initialize {
   return ();
 }
 
-=pod
 =head2 get_SMTP()
 
 Get an SMTP host - a random host is selected if the configuration specifies
@@ -72,7 +71,6 @@ sub get_SMTP {
   return $$array_ref[ rand @{$array_ref} ];
 }
 
-=pod
 =head2 get_SMTP()
 
 Get a string representing the absolute path of the project
@@ -85,7 +83,6 @@ sub get_root {
   return '/web/' . lc(RWDE::Configuration->ServiceName);
 }
 
-=pod
 =head2 AUTOLOAD()
 
 Catch configuration calls, so we can proxy them to the content provider
@@ -98,7 +95,6 @@ sub AUTOLOAD {
   return $self->FIELDNAME($AUTOLOAD, @args);
 }
 
-=pod
 =head2 FIELDNAME()
 
 This is a wrapper function for Configuration content so that the calls can look like they are static

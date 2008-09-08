@@ -26,6 +26,9 @@ use constant CHARACTER_SIZE => 1;      #Size of one character
 use constant PARAM_SIZE     => 9;      #Size of '$$params{'
 use constant RETURN_SIZE    => 6;      #Size of 'return'
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 ## @method void doxygenate()
 # Write/save the content to file. if you give a filename overwrites the original saves backup into the filename given
 # this function takes the filename gets the contents and creates all the tags we know how returns the marked up contents

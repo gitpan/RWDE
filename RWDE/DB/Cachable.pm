@@ -10,6 +10,9 @@ use RWDE::Exceptions;
 
 use RWDE::DB::MemcachedRegistry;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
+
 ## @method protected object _fetch_by_id()
 # Private routine to fetch a record by class_id
 # @return the populated object

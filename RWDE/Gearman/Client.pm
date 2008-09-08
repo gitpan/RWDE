@@ -16,6 +16,9 @@ use Storable qw( thaw nfreeze );
 use RWDE::Configuration;
 use RWDE::Exceptions;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 ## @cmethod object new()
 # Construct a new Gearman clients
 # @return initialized object

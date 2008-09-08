@@ -6,6 +6,9 @@ package RWDE::Web::Helper;
 use strict;
 use warnings;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 sub new {
   my ($proto, $params) = @_;
 

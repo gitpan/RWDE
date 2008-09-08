@@ -24,6 +24,9 @@ use base qw(RWDE::RObject RWDE::DB::Items Exporter);
 
 @RWDE::DB::Record::EXPORT = qw(transaction prepare_transaction);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
+
 ## @cmethod object new()
 # (Enter new info here)
 # @return (Enter explanation for return value here)

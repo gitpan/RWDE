@@ -9,7 +9,11 @@ use Error qw(:try);
 use RWDE::Exceptions;
 use RWDE::RObject;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 =pod
+
 =head1 RWDE::LoginUser
 
 Authentication class to facilitate logging in users. It is assumed that there is a primary field that a user
@@ -17,7 +21,6 @@ can be retrieved by, and a single password field upon which they authenticate wi
 
 =cut
 
-=pod
 =head2 Authenticate()
 
 Given the appropriate parameters (lookup field,lookup value) the desired record
@@ -55,7 +58,6 @@ sub Authenticate {
   return $term;
 }
 
-=pod
 =head2 authenticate()
 
 Given a login capable object, attempt to authenticate the user represented by the object.
@@ -86,7 +88,6 @@ sub authenticate {
   return;
 }
 
-=pod
 =head2 check_password
 
 Returns true if the 'password' stored in the params hash 
@@ -111,7 +112,6 @@ sub check_password {
   return ();
 }
 
-=pod
 =head2 generate_randpass
 
 Generate a random string that is 8 characters long. This is useful for assigning 

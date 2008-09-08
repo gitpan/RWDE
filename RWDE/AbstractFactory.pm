@@ -6,14 +6,17 @@ use warnings;
 use Error qw(:try);
 use RWDE::Exceptions;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 506 $ =~ /(\d+)/;
+
 =pod
+
 =head1 RWDE::AbstractFactory
 
 Abstract Factory, instantiates and returns any App object
 
 =cut
 
-=pod
 =head2 instantiate
 
 Instantiate an instance of the class specified in the parameter

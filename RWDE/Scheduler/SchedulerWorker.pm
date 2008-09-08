@@ -7,10 +7,12 @@ use Error qw(:try);
 
 use RWDE::Exceptions;
 
-
 use base qw(RWDE::DB::Deletable RWDE::DB::Record);
 
 our ($db, $table, $index, $id, @fieldnames, $ccrcontext, %fields, %static_fields, %modifiable_fields, @static_fieldnames, @modifiable_fieldnames);
+
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
 
 BEGIN {
   $table = 'workers';

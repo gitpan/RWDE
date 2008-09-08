@@ -4,6 +4,9 @@
 # @copy 2007 MailerMailer LLC
 # $Id: CGIadapter.pm 446 2008-05-07 17:45:44Z damjan $
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 ## @class RWDE::Web::CGIadapter
 # (Enter RWDE::Web::CGIadapter info here)
 package RWDE::Web::CGIadapter;

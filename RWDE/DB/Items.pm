@@ -8,6 +8,9 @@ use Error qw(:try);
 use RWDE::AbstractFactory;
 use RWDE::Exceptions;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
+
 =pod
 
 =head2 fetch

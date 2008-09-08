@@ -10,6 +10,9 @@ use RWDE::DB::S3;
 
 use RWDE::Configuration; 
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
+
 sub s3_put {
 	my ($self, $params) = @_;
 

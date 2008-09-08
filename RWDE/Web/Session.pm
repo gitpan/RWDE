@@ -18,6 +18,9 @@ use RWDE::Exceptions;
 
 use base qw(RWDE::DB::DefaultDB);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
+
 # Session values are retrieved and set using the session hash key names,
 # just as if you were accessing the hash directly.
 #

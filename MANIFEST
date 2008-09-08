@@ -1,5 +1,6 @@
 Makefile.PL
 MANIFEST
+RWDE.pm
 RWDE/AbstractFactory.pm
 RWDE/CCR.pm
 RWDE/CCRproxy.pm
@@ -32,7 +33,6 @@ RWDE/Mapper.pm
 RWDE/PostMaster.pm
 RWDE/Proxy.pm
 RWDE/RObject.pm
-RWDE/RWDE.pm
 RWDE/Runnable.pm
 RWDE/Scheduler/Pending_action.pm
 RWDE/Scheduler/Scheduler.pm

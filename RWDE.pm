@@ -1,3 +1,8 @@
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 510 $ =~ /(\d+)/;
+
+=pod
+
 =head1 NAME
 
 RWDE - Rapid Web Development Framework

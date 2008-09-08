@@ -4,14 +4,17 @@ use strict;
 use warnings;
 use base qw(RWDE::Proxy);
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 =pod
+
 =head1 RWDE::CCRproxy
 
 Proxy object for getting the specific functionality of a particular object
 
 =cut
 
-=pod
 =head2 decode({ type=> object_type, enc =>object_enc})
 
 To avoid require and instantiation the proxy object returns the decoded value of the passed encoded id.
@@ -24,7 +27,6 @@ sub decode {
   return $self->invoke({class => $$params{'type'}, function => 'decode', params => $$params{'enc'}});
 }
 
-=pod
 =head2 ccr_to_id({ type=> object_type, ccr =>object_ccr})
 
 To avoid require and instantiation the proxy object returns the id value from the passed ccr.
@@ -37,7 +39,6 @@ sub ccr_to_id {
   return $self->invoke({class => $$params{'type'}, function => 'ccr_to_id', params => $$params{'ccr'} });
 }
 
-=pod
 =head2 invoke({ class => class_name, function => function_name, params => function_params})
 
 override base method "invoke" from Proxy.pm
@@ -54,7 +55,5 @@ sub invoke {
 
   return $term->$function($$params{'params'});
 }
-
-
 
 1;

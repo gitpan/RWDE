@@ -3,7 +3,11 @@ package RWDE::Mailing;
 use strict;
 use warnings;
 
+use vars qw($VERSION);
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+
 =pod
+
 =head1 RWDE::Mailing
 
 Mailing interface for objects that can receive emails.
@@ -15,7 +19,6 @@ implement certain methods so the facility works correctly.
 
 =cut
   
-=pod
 =head2 get_email()
 
 Retrieve the class defined email address. This is specifically assigned within the RWDE
@@ -34,7 +37,6 @@ sub get_email {
   return $self->$email_field;
 }
 
-=pod
 =head2 send_message()
 
 This method is required to be implemented by your derived class. If you don't implement it
@@ -55,7 +57,6 @@ sub send_message {
   return();
 }
 
-=pod
 =head2 _send_message()
 
 Verify that that record has no exceeded specified daily limits for messages.
@@ -83,7 +84,6 @@ sub _send_message {
   return();	
 }
 
-=pod
 =head2 check_limit()
 
 Check to make sure that the mailing limit (default 5) has not been exceeded for today.
