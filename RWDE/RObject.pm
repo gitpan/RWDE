@@ -1,13 +1,3 @@
-## @file
-# (Enter your file info here)
-#
-# @copy 2007 MailerMailer LLC
-# $Id: RObject.pm 445 2008-05-07 17:43:24Z damjan $
-
-## @class RWDE::RObject
-# Base class for variousrecords
-# All derived classes must be hashes and correspond to a standard derived class format
-
 package RWDE::RObject;
 
 use strict;
@@ -20,7 +10,17 @@ use RWDE::Exceptions;
 
 use base qw(RWDE::Logging);
 
+use vars qw($AUTOLOAD);
+
 our (%_validators);
+
+=pod
+=head1 RWDE::RObject
+
+Base class for various records
+All derived classes must be hashes and correspond to a standard derived class format
+
+=cut
 
 BEGIN {
 
@@ -34,9 +34,11 @@ BEGIN {
   );
 }
 
-## @cmethod object new()
-# (Enter new info here)
-# @return (Enter explanation for return value here)
+=pod
+=head2 new()
+
+=cut
+
 sub new() {
   my ($proto, $params) = @_;
 
@@ -60,18 +62,28 @@ sub new() {
   return $self;
 }
 
-## @method object is_instance()
-# (Enter is_instance info here)
-# @return (Enter explanation for return value here)
+=pod
+=head2 is_instance()
+
+Determine if this reference instance of a class
+
+=cut
+
 sub is_instance {
   my ($self, $params) = @_;
 
   return ref($self) ? 1 : 0;
 }
 
-## @method void check_object($info)
-# (Enter check_object info here)
-# @param info  (Enter explanation for param here)
+=pod
+=head2 check_object()
+
+Verify that this reference is an object.
+
+DevelException is thrown if this is not an object instantiation.
+
+=cut
+
 sub check_object {
   my ($self, $params) = @_;
 
@@ -85,9 +97,13 @@ sub check_object {
   return ();
 }
 
-## @method object field_desc()
-# Return the field description from the %fields hash for the named field.
-# @return (Enter explanation for return value here)
+=pod
+=head2 field_desc($fn)
+
+Get the field description stored within the object for the param $fn.
+
+=cut
+
 sub field_desc {
   my $self = shift;
   my $fn   = shift;
@@ -95,9 +111,13 @@ sub field_desc {
   return (exists $self->{_fields}->{$fn} ? $self->{_fields}->{$fn}[1] : $fn);
 }
 
-## @method object field_type()
-# (Enter field_type info here)
-# @return (Enter explanation for return value here)
+=pod
+=head2 field_type($fn)
+
+Get the field type stored within the object for the param $fn.
+
+=cut
+
 sub field_type {
   my $self = shift;
   my $fn   = shift;
@@ -105,25 +125,29 @@ sub field_type {
   return $self->{_fields}->{$fn}[0];
 }
 
-## @cmethod object FIELDNAME()
-# All field names of the record are accessible via the field name.  If a
-# second parameter is provided, that value is stored as the data,
-# otherwise the existing value if any is returned.  Throws an 'undef'
-# exception on error.  It is intended to be called by an F<AUTOLOAD()>
-# method from the subclass.
-#
-# Example:
-#
-#  $rec->owner_email('new\@add.ress');
-#  $rec->user_addr2(undef);
-#  print $rec->user_fname();
-#
-# Would be converted by F<AUTOLOAD()> in the subclass to calls like
-#
-#  $rec->FIELDNAME('owner_email','new@add.ress');
-#
-# and so forth.
-# @return (Enter explanation for return value here)
+=pod
+=head2 FIELDNAME
+
+All field names of the record are accessible via the field name.  If a
+second parameter is provided, that value is stored as the data,
+otherwise the existing value if any is returned.  Throws an 'undef'
+exception on error.  It is intended to be called by an F<AUTOLOAD()>
+method from the subclass.
+
+Example:
+
+  $rec->owner_email('new\@add.ress');
+  $rec->user_addr2(undef);
+  print $rec->user_fname();
+
+  Would be converted by F<AUTOLOAD()> in the subclass to calls like
+
+  $rec->FIELDNAME('owner_email','new@add.ress');
+
+ and so forth.
+
+=cut
+
 sub FIELDNAME {
   my $self           = shift;
   my $fn             = shift;
@@ -171,14 +195,21 @@ sub FIELDNAME {
 
   return $self->{_data}->{$fn};
 }
-## @method void validate_email()
-# Check the syntactical format of an email address to reduce risk of
-# bogus addresses.  Return empty string if OK, otherwise return the error
-# message we should display.
-#
-# Ensures that the address is in somewhat reasonable domain style, does
-# not contain blanks, commas, brackets, colons, semicolons, or end in a
-# period.
+
+=pod
+=head2 validate_email()
+
+Check the syntactical format of an email address to reduce risk of
+bogus addresses. 
+
+RWDE::DevelException thrown if invalid format detected, otherwise
+just returns
+
+Ensures that the address is in somewhat reasonable domain style, does
+not contain blanks, commas, brackets, colons, semicolons, or end in a
+period.
+
+=cut
 
 sub validate_email {
   my ($self, $addr) = @_;
@@ -206,8 +237,19 @@ sub validate_email {
   return ();
 }
 
-## @method void validate_ip()
-# Validates the format of a dotted quad IP address.
+=pod
+=head2 validate_ip()
+
+Check the syntactical format of an ip address to reduce risk of
+storing a bogus or faked ip. 
+
+RWDE::DevelException thrown if invalid format detected, otherwise
+just returns
+
+Ensures that the address is the standard aaa.bbb.ccc.ddd ip address format
+
+=cut
+
 sub validate_ip {
   my ($self, $ip) = @_;
 
@@ -227,8 +269,16 @@ sub validate_ip {
   return;
 }
 
-## @method void validate_boolean()
-# Validates a potential boolean input.
+=pod
+=head2 validate_boolean()
+
+Check to make sure that any of the accepted variations on a boolean is present.
+
+RWDE::DevelException thrown if invalid boolean detected, otherwise
+just returns
+
+=cut
+
 sub validate_boolean {
   my ($self, $boolean) = @_;
 
@@ -245,14 +295,22 @@ sub validate_boolean {
   return;
 }
 
-## @cmethod void DESTROY()
-# do nothing.  here just to shut up TT when AUTOLOAD is present
+=pod
+=head2 DESTROY()
+
+Do nothing. Here just to shut up TT when AUTOLOAD is present
+
+=cut
+
 sub DESTROY {
 
 }
 
-## @method void display()
-# (Enter display info here)
+=pod
+=head2 display()
+
+=cut
+
 sub display {
   my ($self, $params) = @_;
 
@@ -267,19 +325,22 @@ sub display {
   return ();
 }
 
-use vars qw($AUTOLOAD);
+=pod
+=head2 AUTOLOAD()
 
-## @cmethod object AUTOLOAD()
-# All field names of the record are accessible via the field name.  If a
-# parameter is provided, that value is stored as the data, otherwise the
-# existing value if any is returned.  Throws an 'undef' exception on
-# error.
-#
-# Example:
-#
-#  $rec->password('blahblah');
-#  print $rec->password();
-# @return (Enter explanation for return value here)
+All field names of the record are accessible via the field name.  If a
+parameter is provided, that value is stored as the data, otherwise the
+existing value if any is returned.  Throws an 'undef' exception on
+error.
+
+Example:
+
+  $rec->password('blahblah');
+  print $rec->password();
+  @return (Enter explanation for return value here)
+
+=cut
+
 sub AUTOLOAD {
   my ($self, @args) = @_;
 
@@ -291,6 +352,18 @@ sub AUTOLOAD {
 
   return $self->FIELDNAME($AUTOLOAD, @args);
 }
+
+=pod
+=head2 copy_record()
+
+Copy a source record over top of this object.
+
+In doing so we need to verify that this is an object instance, that this object is different
+than the source record.
+
+If both of those are true then we simply copy the data present within $source into this object instance.
+
+=cut
 
 sub copy_record {
   my ($self, $source) = @_;
@@ -312,8 +385,7 @@ sub copy_record {
 }
 
 =pod
-
-=head2 fill
+=head2 fill()
 
 Fill an object with data specified in the params hash. If the params hash does not have
 every piece of data, an exception is thrown.
@@ -338,8 +410,7 @@ sub fill {
 }
 
 =pod
-
-=head2 fill_required
+=head2 fill_required()
 
 This function takes the required array of elements, populates the current object and notifies if there are any missing elements
 
@@ -366,8 +437,7 @@ sub fill_required {
 }
 
 =pod
-
-=head2 fill_optional
+=head2 fill_optional()
 
 This function takes the required array of elements, populates the current object and notifies if there are any missing elements
 
@@ -387,9 +457,13 @@ sub fill_optional {
   return ();
 }
 
-## @method object get_id()
-# (Enter get_id info here)
-# @return (Enter explanation for return value here)
+=pod
+=head2 get_id()
+
+Get the id value present in this classes id_name
+
+=cut
+
 sub get_id {
   my ($self, $params) = @_;
 
@@ -398,17 +472,24 @@ sub get_id {
   return $self->$id_name;
 }
 
-## @method object get_id_name()
-# (Enter get_id_name info here)
-# @return (Enter explanation for return value here)
+=pod
+=head2 get_id_name()
+
+Get the id_name stored within the class
+
+=cut
+
 sub get_id_name {
   my ($self, $params) = @_;
 
   return $self->get_static({ value => '_id' });
 }
 
-## @method void fetch_by_id()
-# (Enter fetch_by_id info here)
+=pod
+=head2 fetch_by_id()
+
+=cut
+
 sub fetch_by_id {
   my ($self, $params) = @_;
 
@@ -421,17 +502,22 @@ sub fetch_by_id {
   return $term->_fetch_by_id({ $term->get_id_name() => $$params{ $term->get_id_name() } });
 }
 
+=pod
+=head2 _fetch_by_id()
+
+=cut
+
 sub _fetch_by_id {
   my ($self, $params) = @_;
 
   return $self->__fetch_by_id($params);
-
 }
 
-## @method object get_static($value)
-# (Enter get_static info here)
-# @param value  (Enter explanation for param here)
-# @return (Enter explanation for return value here)
+=pod
+=head2 get_static()
+
+=cut
+
 sub get_static {
   my ($self, $params) = @_;
 
@@ -448,6 +534,55 @@ sub get_static {
   }
 
   return $value;
+}
+
+=pod
+=head2 check_params()
+
+Verify that all fields specified in the required array are present within the params
+
+Note that other fields may be present within the params, but that the required elements
+must be present at a minimum.
+
+RWDE::DevelException is thrown if the required fields are not present within the params, 
+along with a string that includes the names of all missing fields. This information
+maybe be useful to pass back to the user in an alternate form.
+
+=cut
+
+sub check_params {
+  my ($self, $params) = @_;
+  
+  if (!(defined $params)) {
+    throw RWDE::DevelException({ info => "Record::check_params: params hash not supplied" });
+  }
+
+  my @required = @{ $$params{required} };
+  my $supplied = $$params{supplied};
+  
+  my ($package, $filename, $line) = caller(1);
+  
+  #ensure that we received a params hash, and not a scalar or array
+  if (ref $supplied ne 'HASH') {
+    throw RWDE::DevelException({ info => "Record::check_params: ($package) from $filename Line: $line attempted to pass invalid params hash"});
+  }
+
+  my @missing;
+  
+  foreach my $f (@required) {
+    if ( not defined($$supplied{$f})
+      or ($$supplied{$f} =~ m/^\s*$/)
+      or ($$supplied{$f} eq '--')) {
+      push @missing, $f;
+    }
+  }
+
+  # verify data looks ok...
+  if (@missing) {
+    throw RWDE::DevelException({ info => "Record::check_params: ($package) from $filename Line: $line is missing parameters: " . join(', ', @missing) });
+  }
+
+  return ();
 }
 
 1;

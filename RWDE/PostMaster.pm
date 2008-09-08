@@ -10,8 +10,24 @@ use Template;
 use Net::SMTP;
 
 use RWDE::Configuration;
+use RWDE::RObject;
 
 my $unique_instance;
+
+=pod
+=head1 RWDE::Postmaster
+
+This class implements methods that detail the sending of email. Both verp and standard emailing are implemented here, as 
+well as methods for automatically reporting exceptions and hooks for assigning tickets to RT.
+
+=cut
+
+=pod
+=head2 get_instance()
+
+Return an instance of RWDE::Postmaster
+
+=cut
 
 sub get_instance {
   my ($self, $params) = @_;
@@ -22,6 +38,14 @@ sub get_instance {
 
   return $unique_instance;
 }
+
+=pod
+=head2 initialize()
+
+Initialize an instance of RWDE::Postmaster. This includes pulling some data from the config file in order to find an
+SMTP server and preparing to handle a mail template.
+
+=cut
 
 sub initialize {
   my ($self, $params) = @_;
@@ -57,7 +81,7 @@ sub send_message {
   my ($self, $params) = @_;
 
   my @required = qw( smtp_sender smtp_recipient template );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   # Process the message thru the Template
   my $output;
@@ -94,13 +118,21 @@ sub send_message {
   return ();
 }
 
+=pod
+=head2 send_verp_message($smtp_sender, $recipients, $template)
+
+Prepare or send a 1-to-many message to all the addresses contained within $recipients, from $smtp_sender address, using $template as a template input
+and the $params to populate the template. To alter the header from/to etc, edit the template.
+
+=cut
+
 sub send_verp_message {
   my ($self, $params) = @_;
 
   my @failed;
 
   my @required = qw( smtp_sender recipients template);
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my $postmaster = RWDE::PostMaster->get_instance();
 
@@ -142,6 +174,16 @@ sub send_verp_message {
   return \@good_recipients;
 }
 
+=pod
+=head2 send_support_message($topic, $question)
+
+Prepare or send a message to the support queue requested within $topic, from a Sender (specified in config file) using support.tt as a template input.
+The $params are used to to populate the template. To alter the header from/to etc, edit the template.
+
+This is a somewhat niche method utilized with pre-established support systems such as RT.
+
+=cut
+
 sub send_support_message {
   my ($self, $params) = @_;
 
@@ -164,6 +206,17 @@ sub send_support_message {
 
   return ();
 }
+
+=pod
+=head2 send_report_message($topic, $question, $template)
+
+Prepare or send a message to the ErrorReport address specified in the config file, from Sender - also specified in the config file.
+Uses report.tt as a template input. The $params are used to to populate the template. To alter the header from/to etc, edit the template.
+
+This method is extremely useful in addressing uncaught exceptions, if the system is configured correctly those messages will get sent 
+via this method.
+
+=cut
 
 sub send_report_message {
   my ($self, $params) = @_;

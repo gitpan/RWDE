@@ -2,11 +2,14 @@ package RWDE::CCRproxy;
 
 use strict;
 use warnings;
-
-# Proxy object for getting the specific functionality of a particular object
-
-
 use base qw(RWDE::Proxy);
+
+=pod
+=head1 RWDE::CCRproxy
+
+Proxy object for getting the specific functionality of a particular object
+
+=cut
 
 =pod
 =head2 decode({ type=> object_type, enc =>object_enc})
@@ -14,6 +17,7 @@ use base qw(RWDE::Proxy);
 To avoid require and instantiation the proxy object returns the decoded value of the passed encoded id.
 
 =cut
+
 sub decode {
   my ($self,$params) = @_;
 
@@ -26,6 +30,7 @@ sub decode {
 To avoid require and instantiation the proxy object returns the id value from the passed ccr.
 
 =cut
+
 sub ccr_to_id {
   my ($self,$params) = @_;
 

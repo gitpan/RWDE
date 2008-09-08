@@ -7,6 +7,7 @@ use Error qw(:try);
 use Template;
 
 use RWDE::Configuration;
+use RWDE::RObject;
 
 use base qw(RWDE::Singleton);
 
@@ -51,7 +52,7 @@ sub render {
   my ($self, $params) = @_;
 
   my @required = qw( helper );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my $template_adapter = $self->get_instance();
 

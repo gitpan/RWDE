@@ -3,10 +3,14 @@ package RWDE::Proxy;
 use strict;
 use warnings;
 
-# Proxy object for getting the specific functionality of a particular object
-
 use RWDE::AbstractFactory;
 
+=pod
+=head1 RWDE::Proxy
+
+Proxy object for getting the specific functionality of a particular object
+
+=cut
 
 =pod
 =head2 invoke({ class => class_name, function => function_name, params => function_params})

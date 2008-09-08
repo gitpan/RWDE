@@ -1,18 +1,3 @@
-## @file
-# (Enter your file info here)
-#
-# $Id: Logger.pm 450 2008-05-07 19:31:45Z damjan $
-
-## @class RWDE::Logger
-# This namespace exports methods that maybe be imported by any RWDE project.
-# These methods provide support for logging via syslog.
-# -
-# The above functionality is categorized into 3 separate export tags:
-#   - Provides error and terminate methods
-# :LOG   - Provides$self->syslog_msg, terminate and debug_info methods
-# -
-# Invoking all of the above methods would involve an import call within your RWDE class like:
-# 
 package RWDE::Logger;
 
 use strict;
@@ -26,29 +11,57 @@ use RWDE::Exceptions;
 
 our ($debug, $syslog_socket);
 
-## @method void set_debug()
-# Method to enable debug mode
+=pod
+=head1 RWDE::Logger
+
+Provides methods to log via syslog
+
+=cut
+
+=pod
+=head2 set_debug()
+
+Method to enable debug mode 
+
+=cut
+
 sub set_debug {
   $debug = 1;
   return;
 }
 
-## @method void toggle_debug()
-# Method to toggle debug mode
+=pod
+=head2 toggle_debug()
+
+Method to toggle debug mode
+
+=cut
+
 sub toggle_debug {
   $debug = ($debug ? 0 : 1);
   return;
 }
 
-## @method object is_debug()
-# Method to determine if debug mode is currently set
-# @return current debug status
+=pod
+=head2 is_debug()
+
+Determine if debug mode is currently set
+
+=cut
+
 sub is_debug {
   return $debug;
 }
 
-## @method protected void _init_syslog()
-# Open the syslog connection defined within the Configuration file
+=pod
+=head2 _init_syslog()
+
+Private Method
+
+Open the syslog connection defined within the Configuration file
+
+=cut
+
 sub _init_syslog {
 
   # open syslog connection
@@ -66,12 +79,18 @@ sub _init_syslog {
   return ();
 }
 
-## @method void$self->syslog_msg()
-# Log a message to syslog via the established syslog connection
-# A type and info are required
-# @param type is one of debug, info, notice, warning, err, crit, alert, emerg
-# @param info is the desired log message
-#TODO properly get the params here
+=pod
+=head2 syslog_msg()
+
+Log a message to syslog via the established syslog connection
+
+A type and info are required
+
+type is one of debug, info, notice, warning, err, crit, alert, emerg
+info is the desired log message
+
+=cut
+
 sub syslog_msg {
   my ($self, $type, $info) = @_;
 
@@ -112,8 +131,13 @@ sub syslog_msg {
   return;
 }
 
-## @method void debug_info()
-# take the type and the human readable message and print it to STDERR if debug is on
+=pod
+=head2 debug_info()
+
+take the type and the human readable message and print it to STDERR if debug is on
+
+=cut
+
 sub debug_info {
   my ($type, $info) = @_;
 

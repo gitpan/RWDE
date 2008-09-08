@@ -8,6 +8,19 @@ use base qw(RWDE::RObject);
 
 our (@fieldnames, %fields, %static_fields, %modifiable_fields, @static_fieldnames, @modifiable_fieldnames);
 
+=pod
+=head1 RWDE::Configuration_content
+
+
+=cut
+
+=pod
+=head2 initialize()
+
+Create a RWDE object and populate it with the project configuration content.
+
+=cut
+
 sub initialize {
   my ($self, $params) = @_;
 

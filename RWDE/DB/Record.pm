@@ -2,7 +2,7 @@
 # (Enter your file info here)
 #
 # @copy 2007 MailerMailer LLC
-# $Id: Record.pm 461 2008-05-08 22:12:06Z damjan $
+# $Id: Record.pm 498 2008-08-22 15:35:28Z kamelkev $
 
 ## @class RWDE::DB::Record
 # (Enter RWDE::DB::Record info here)
@@ -557,7 +557,7 @@ sub get_data {
 sub fill_new {
   my ($self, $params) = @_;
 
-  RWDE::DB::Record->check_params({ required => ['row'], supplied => $params });
+  RWDE::RObject->check_params({ required => ['row'], supplied => $params });
 
   my $term = $self->new();
 
@@ -643,45 +643,6 @@ sub get_password {
   my ($self, $params) = @_;
 
   return throw RWDE::DevelException({ info => "get_password is an abstract function in Record - the inherting class should implement it" });
-}
-
-## @method void check_params($required, $supplied)
-# (Enter check_params info here)
-# @param supplied  (Enter explanation for param here)
-# @param required  (Enter explanation for param here)
-sub check_params {
-  my ($self, $params) = @_;
-
-  if (!(defined $params)) {
-    throw RWDE::DevelException({ info => "Record::check_params: params hash not supplied" });
-  }
-
-  my @required = @{ $$params{required} };
-  my $supplied = $$params{supplied};
-
-  my ($package, $filename, $line) = caller(1);
-
-  #ensure that we received a params hash, and not a scalar or array
-  if (ref $supplied ne 'HASH') {
-    throw RWDE::DevelException({ info => "Record::check_params: ($package) from $filename Line: $line attempted to pass invalid params hash" });
-  }
-
-  my @missing;
-
-  foreach my $f (@required) {
-    if ( not defined($$supplied{$f})
-      or ($$supplied{$f} =~ m/^\s*$/)
-      or ($$supplied{$f} eq '--')) {
-      push @missing, $f;
-    }
-  }
-
-  # verify data looks ok...
-  if (@missing) {
-    throw RWDE::DevelException({ info => "Record::check_params: ($package) from $filename Line: $line is missing parameters: " . join(', ', @missing) });
-  }
-
-  return ();
 }
 
 ## @method void is_missing()

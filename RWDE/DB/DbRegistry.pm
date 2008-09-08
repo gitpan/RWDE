@@ -1,7 +1,7 @@
 ## @file
 # (Enter your file info here)
 #
-# $Id: DbRegistry.pm 479 2008-06-24 22:15:28Z kamelkev $
+# $Id: DbRegistry.pm 496 2008-08-20 14:18:09Z damjan $
 
 # Database connection and handling registry
 
@@ -19,6 +19,7 @@ use Error qw(:try);
 
 use RWDE::Configuration;
 use RWDE::Exceptions;
+use RWDE::RObject;
 
 use base qw(RWDE::Singleton);
 
@@ -106,7 +107,7 @@ sub get_db_notifications {
   my $dbh = $self->get_dbh($params);
 
   my @required = qw( sleeptime );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   use IO::Select;
 

@@ -176,7 +176,7 @@ sub run{
   	print "RWDE interpreter\n";
   	print "\nFor easy development or unit testing invoke the interpreter in non-interactive mode\n";
   	print "interpreter <class_type> <method_name> [<class_id|0 for static calls> [parameter,value]]\n\n";
-  	print "ie. ./interpreter LS::List new 0 list_id,3\n\n";
+  	print "ie. ./interpreter LS::List fetch_by_id 0 list_id,3\n\n";
   	print "ie. ./interpreter LS::List display 3\n\n";
   	print "Or start it without params to get the interactive 'shell;\n\n";
   	exit;

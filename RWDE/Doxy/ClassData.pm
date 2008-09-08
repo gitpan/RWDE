@@ -2,7 +2,7 @@
 # (Enter your file info here)
 # 
 # @copy 2007 MailerMailer LLC
-# $Id: ClassData.pm 437 2008-05-06 14:22:02Z damjan $
+# $Id: ClassData.pm 498 2008-08-22 15:35:28Z kamelkev $
 
 ## @class RWDE::Doxy::ClassData
 # This class stores an intermediate representation of a class (or package).
@@ -100,7 +100,7 @@ sub get_method() {
   my ($self, $params) = @_;
 
   my @required = qw( method_name );
-  $self->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my $method_data;
 

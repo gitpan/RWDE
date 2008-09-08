@@ -2,7 +2,7 @@
 # (Enter your file info here)
 #
 # @copy 2007 MailerMailer LLC
-# $Id: SCF.pm 437 2008-05-06 14:22:02Z damjan $
+# $Id: SCF.pm 498 2008-08-22 15:35:28Z kamelkev $
 
 ## @class RWDE::Doxy::SCF
 # S(ource)C(ode)F(file) is going to be implementing DoxGenerator interface it's going to be doxygenable
@@ -13,8 +13,6 @@ use warnings;
 
 use Error qw(:try);
 use RWDE::Exceptions;
-
-
 
 use RWDE::Doxy::ClassData;
 use RWDE::Doxy::MethodData;
@@ -230,7 +228,7 @@ sub add_range_to_file_out() {
   my ($self, $params) = @_;
 
   my @required = qw( start_index end_index );
-  $self->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   for (my $file_index = $$params{start_index} ; $file_index <= $$params{end_index} ; $file_index++) {
     $self->add_to_file_out({ content => $self->file_content_in->[$file_index] });
@@ -260,7 +258,7 @@ sub get_class() {
   my ($self, $params) = @_;
 
   my @required = qw( class_name );
-  $self->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my $class_data;
 

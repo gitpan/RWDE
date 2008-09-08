@@ -1,10 +1,3 @@
-## @file
-# Exception container file, contains definitions for RWDE Exceptions
-#
-# $Id: Exceptions.pm 432 2008-05-02 19:17:09Z damjan $
-
-## @class RWDE::BaseException
-# System defined exceptions are based off of the default behaviour of this base exception class
 package RWDE::BaseException;
 
 use strict;
@@ -16,10 +9,24 @@ use base qw(Error);
 
 use overload ('""' => 'stringify');
 
+=pod
+=head1 RWDE::Exceptions
 
-## @cmethod object new()
-# Override for the "new" method in the Error base class, initializes the instance the way we want
-# @return Initialized instance of Error
+Exception container file, contains definitions for RWDE Exceptions
+
+System defined exceptions are based off of the default behaviour of this base exception class
+
+=cut
+
+=pod
+=head2 new()
+
+Override for the "new" method in the Error base class, initializes the instance the way we want.
+
+This will return an initialized instance of Error
+
+=cut
+
 sub new {
   my ($proto, $params) = @_;
 
@@ -40,6 +47,13 @@ sub new {
   return $exception;
 }
 
+=pod
+=head2 is_retry()
+
+Determine whether this was a retry attempt
+
+=cut
+
 sub is_retry {
   my ($self) = @_;
 
@@ -48,89 +62,162 @@ sub is_retry {
 
 1;
 
-#Exception class definitions for RWDE
+=pod
+=head1 Exception class definitions for RWDE
 
-## @class RWDE::DevelException
-# devel - caught with RWDE::DevelException - developer only exceptions, typically for unplanned behaviour
+=cut
+
+=pod
+=head2 RWDE::DevelException()
+
+Caught with RWDE::DevelException - developer only exceptions, typically for unplanned behaviour
+
+=cut
+
 package RWDE::DevelException;
 use base qw(RWDE::BaseException);
 
 1;
 
-## @class RWDE::DataMissingException
-# data.missing - caught with RWDE::DataMissingException - missing data detected
+=pod
+=head2 RWDE::DataMissingException()
+
+caught with RWDE::DataMissingException - missing data detected
+
+=cut
+
 package RWDE::DataMissingException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::DataBadException
-# Invalid data detected
+=pod
+=head2 RWDE::DataBadException()
+
+Caught with RWDE::DataBadException - Invalid data detected
+
+=cut
+
 package RWDE::DataBadException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::DataLimitException
-# Limit or threshold exceeded
+=pod
+=head2 RWDE::DataLimitException()
+
+Caught with RWDE::DataLimitException -  Limit or threshold exceeded
+
+=cut
+
 package RWDE::DataLimitException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::DataDuplicateException
-# Discovered duplicate data (typically db related)
+=pod
+=head2 RWDE::DataDuplicateException()
+
+Caught with RWDE::DataDuplicateException - Discovered duplicate data (typically db related)
+
+=cut
+
 package RWDE::DataDuplicateException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::DataNotFoundException
-# Expected data does not exist
+=pod
+=head2 RWDE::DataNotFoundException()
+
+Caught with RWDE::DataNotFoundException - Expected data does not exist
+
+=cut
+
 package RWDE::DataNotFoundException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::BadPasswordException
-# Problems accepting a password
+=pod
+=head2 RWDE::BadPasswordException()
+
+Caught with RWDE::BadPasswordException - Problems accepting a password
+
+=cut
+
 package RWDE::BadPasswordException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::SSLException
-# Problems with http SSL connections
+=pod
+=head2 RWDE::SSLException()
+
+Caught with RWDE::SSLException - Problems with http SSL connections
+
+=cut
+
 package RWDE::SSLException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::Web::SessionMissingException
-# Problem with the session occurred
+=pod
+=head2 RWDE::Web::SessionMissingException()
+
+Caught with RWDE::Web::SessionMissingException - Problem with the session occurred
+
+=cut
+
 package RWDE::Web::SessionMissingException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::StatusException
-# Problem with instance status
+=pod
+=head2 RWDE::StatusException()
+
+Caught with RWDE::StatusException - Problem with instance status
+
+=cut
+
 package RWDE::StatusException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::DatabaseErrorException
-# Internal db problem detected
+=pod
+=head2 RWDE::DatabaseErrorException()
+
+Caught with RWDE::DatabaseErrorException - Internal db problem detected
+
+=cut
+
 package RWDE::DatabaseErrorException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::PolicyException
-# Policy violation occurred
+=pod
+=head2 RWDE::PolicyException()
+
+Caught with RWDE::PolicyException - Policy violation occurred
+
+=cut
+
 package RWDE::PolicyException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::PermissionException
-# Permission violation occurred
+=pod
+=head2 RWDE::PermissionException()
+
+Caught with RWDE::PermissionException - Permission violation occurred
+
+=cut
+
 package RWDE::PermissionException;
 use base qw(RWDE::BaseException);
 1;
 
-## @class RWDE::DefaultException
-# Default Exception - undefined exceptions are funnelled here
+=pod
+=head2RWDE::DefaultException()
+
+Caught with RWDE::DefaultException - Default Exception - undefined exceptions are funnelled here
+
+=cut
+
 package RWDE::DefaultException;
 use base qw(RWDE::BaseException);
 1;

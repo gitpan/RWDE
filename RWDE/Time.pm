@@ -1,7 +1,7 @@
 ## @file
 # (Enter your file info here)
 #
-# $Id: Time.pm 438 2008-05-06 14:35:19Z damjan $
+# $Id: Time.pm 498 2008-08-22 15:35:28Z kamelkev $
 
 ## @class RWDE::Time
 # (Enter RWDE::Time info here)
@@ -24,7 +24,7 @@ sub fetch_time {
   my ($self, $params) = @_;
 
   my @required = qw( timestamp interval );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   #insert regex for timestamp validation and interval validation...
 
@@ -114,7 +114,7 @@ sub format_date {
   my ($self, $params) = @_;
 
   my @required = qw( timestamp );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my @parts = split / /, $$params{timestamp};
 
@@ -139,7 +139,7 @@ sub format_qdate {
   my ($self, $params) = @_;
 
   my @required = qw( timestamp );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my $time = $self->format_date({ timestamp => $$params{timestamp} });
 
@@ -154,7 +154,7 @@ sub format_rfc {
   my ($self, $params) = @_;
 
   my @required = qw( timestamp );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my $select = 'to_char(?::TIMESTAMP WITH TIME ZONE, ?)';
   my @query_params = ($$params{timestamp}, 'Dy, DD Mon YYYY HH12:MI:SS TZ');
@@ -170,7 +170,7 @@ sub format_human {
   my ($self, $params) = @_;
 
   my @required = qw( timestamp );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my $select = 'to_char(?::TIMESTAMP WITH TIME ZONE, ?)';
   my @query_params = ($$params{timestamp}, 'YYYY-MM-DD HH12:MI:SS TZ');
@@ -181,7 +181,7 @@ sub format_human {
 sub extract_dow {
   my ($self, $params) = @_;
   my @required = qw( timestamp );
-  RWDE::DB::Record->check_params({ required => \@required, supplied => $params });
+  RWDE::RObject->check_params({ required => \@required, supplied => $params });
 
   my $select       = 'EXTRACT(DOW FROM ?::timestamp)';
   my @query_params = ($$params{timestamp});

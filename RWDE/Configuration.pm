@@ -11,7 +11,24 @@ use base qw(RWDE::Singleton);
 our $unique_instance;
 our (@fieldnames, %fields, %static_fields, %modifiable_fields, @static_fieldnames, @modifiable_fieldnames);
 
+use vars qw($AUTOLOAD);
+
+=pod
+=head1 RWDE::Configuration
+
+
+=cut
+
+=pod
+=head2 get_instance()
+
+Get an instance of the Configuration sans content. You will need an initialized Configuration
+in order to read the values in your project.conf file.
+
 #TODO Move this method to RWDE::Singleton
+
+=cut
+
 sub get_instance {
   my ($self, $params) = @_;
 
@@ -21,6 +38,13 @@ sub get_instance {
 
   return $unique_instance;
 }
+
+=pod
+=head2 initialize()
+
+Load the content from within the project configuration file via Configuration_content
+
+=cut
 
 sub initialize {
   my ($self, $params) = @_;
@@ -32,6 +56,14 @@ sub initialize {
   return ();
 }
 
+=pod
+=head2 get_SMTP()
+
+Get an SMTP host - a random host is selected if the configuration specifies
+a mail cluster
+
+=cut
+
 sub get_SMTP {
   my ($self, $params) = @_;
 
@@ -40,27 +72,40 @@ sub get_SMTP {
   return $$array_ref[ rand @{$array_ref} ];
 }
 
+=pod
+=head2 get_SMTP()
+
+Get a string representing the absolute path of the project
+
+=cut
+
 sub get_root {
   my ($self, $params) = @_;
 
   return '/web/' . lc(RWDE::Configuration->ServiceName);
 }
 
-use vars qw($AUTOLOAD);
+=pod
+=head2 AUTOLOAD()
 
-## @cmethod object AUTOLOAD()
-# We catch configuration calls, so we can proxy them to the content provider
-# @return (Enter explanation for return value here)
+Catch configuration calls, so we can proxy them to the content provider
+
+=cut
+
 sub AUTOLOAD {
   my ($self, @args) = @_;
 
   return $self->FIELDNAME($AUTOLOAD, @args);
 }
 
-## @cmethod object FIELDNAME()
-# This is a wrapper function for Configuration content so that the calls can look like they are static
-# due to this object being a singleton, there's no multiple configuration loaded
-# @return (Enter explanation for return value here)
+=pod
+=head2 FIELDNAME()
+
+This is a wrapper function for Configuration content so that the calls can look like they are static
+due to this object being a singleton, there's no multiple configuration loaded
+
+=cut
+
 sub FIELDNAME {
   my $self = shift;
   my $fn   = shift;

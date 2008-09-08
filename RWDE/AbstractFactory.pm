@@ -1,12 +1,26 @@
 package RWDE::AbstractFactory;
 
-# Abstract Factory, instantiates and returns any App object
-
 use strict;
 use warnings;
 
 use Error qw(:try);
 use RWDE::Exceptions;
+
+=pod
+=head1 RWDE::AbstractFactory
+
+Abstract Factory, instantiates and returns any App object
+
+=cut
+
+=pod
+=head2 instantiate
+
+Instantiate an instance of the class specified in the parameter
+
+Requires class parameter
+
+=cut
 
 sub instantiate {
   my ($self, $params) = @_;

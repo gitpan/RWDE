@@ -6,8 +6,25 @@ use warnings;
 
 use Digest::MD5 qw(md5_hex);
 
-#If no ccrcontext is explicitely set within a class we autogenerate on using the class name
-#is this safe? Perhaps we need an alternate hashing scheme?
+=pod
+=head1 RWDE::CCR
+
+
+=cut
+
+=pod
+=head2 get_ccrcontext()
+
+Return back the class declared ccrcontext if it exists, otherwise generate one from the class name.
+
+We use a pretty general hashing scheme here, it's suggested that this be replaced.
+
+ccrcontext is ultimately used to generate web-safe ids that can't easily be guessed by web robots (or jerks) - although
+depending on your hashing scheme you could make this pretty strong, but that has the cost of tying up the webserver
+if you frequently end up using these ids in the application.
+
+=cut
+
 sub get_ccrcontext {
   my ($self, $params) = @_;
 
@@ -23,8 +40,15 @@ sub get_ccrcontext {
   return $ccrcontext;
 }
 
-#Unlike fetch_one, not only is the loader limitted to a single row
-#but the lookup criteria is limitted to id,ccr or enc
+=pod
+=head2 fetch_by_id()
+
+This method is a macro for fetching a single record from the database using either id.enc or ccr. 
+This could manually be done using more complicated methods found within the items class, which 
+is probably what you want to do if you are trying to do anything fancy.
+
+=cut
+
 sub fetch_by_id {
   my ($self, $params) = @_;
 
@@ -53,7 +77,6 @@ sub fetch_by_id {
 }
 
 =pod
-
 =head2 append_ccr($integer[,$context])
 
 Append the check-character to the integer and return the result.
@@ -78,7 +101,6 @@ sub append_ccr {
 }
 
 =pod
-
 =head2 verify_ccr($string[,$context])
 
 Compares the check-character (last character) of C<$string> to a new
@@ -106,7 +128,6 @@ sub verify_ccr {
 }
 
 =pod
-
 =head2 _compute_ccr($string[,$context])
 
 Internal routine to do the math to compute the Character Checksum characteR
@@ -156,8 +177,7 @@ sub compute_security_code {
   return substr(md5_hex($context, $s), -8);
 }
 
-=pod
-  
+=pod 
 =head2 ccr_to_id($string)
 
 Convert the string to an id number.  Returns undef on failure.
@@ -182,7 +202,6 @@ sub ccr_to_id {
 }
 
 =pod
-
 =head2 get_ccr()
 
 Returns the encoded value of the derived objects id
@@ -205,7 +224,6 @@ sub get_ccr {
 }
 
 =pod
-
 =head2 encode($string)
 
 Returns the value with CCR appended and a hash both based on
@@ -228,7 +246,6 @@ sub encode {
 }
 
 =pod
-
 =head2 get_enc()
 
 Returns the encoded value of the derived objects id
@@ -244,7 +261,6 @@ sub get_enc {
 }
 
 =pod
-
 =head2 decode($encodedString)
 
 Return the value decoded from the return value of the encode method.  
@@ -271,9 +287,15 @@ sub decode ($) {
   }
 }
 
-## @method object get_ccr_name()
-# (Enter get_ccr_name info here)
-# @return (Enter explanation for return value here)
+
+=pod
+=head2 get_ccr_name()
+
+Determine the exact label used within the object for storing the ccr value. By convention it's a variation
+on the class id label.
+
+=cut
+
 sub get_ccr_name {
   my ($self, $params) = @_;
 
@@ -284,9 +306,14 @@ sub get_ccr_name {
   return $id_name;
 }
 
-## @method object get_enc_name()
-# (Enter get_enc_name info here)
-# @return (Enter explanation for return value here)
+=pod
+=head2 get_enc_name()
+
+Determine the exact label used within the object for storing the enc value. By convention it's a variation
+on the class id label.
+
+=cut
+
 sub get_enc_name {
   my ($self, $params) = @_;
 
