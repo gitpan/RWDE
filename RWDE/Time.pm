@@ -1,10 +1,3 @@
-## @file
-# (Enter your file info here)
-#
-# $Id: Time.pm 505 2008-09-08 23:21:58Z kamelkev $
-
-## @class RWDE::Time
-# (Enter RWDE::Time info here)
 package RWDE::Time;
 
 use strict;
@@ -16,13 +9,30 @@ use RWDE::DB::DefaultDB;
 use base qw(RWDE::DB::DefaultDB RWDE::DB::Record);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 516 $ =~ /(\d+)/;
 
-## @method object fetch_time($interval, $timestamp)
-# (Enter fetch_time info here)
-# @param timestamp  (Enter explanation for param here)
-# @param interval  (Enter explanation for param here)
-# @return (Enter explanation for return value--(Enter explanation for return value here)--here)
+=pod
+
+=head1 RWDE::Time
+
+Class for performing time related queries. RWDE doesn't use any external perl libraries, instead
+it queries the database set up in the project configuration file.
+
+=cut
+
+
+=head2 fetch_time({ timestamp, interval })
+
+Fetch a calculated date. Provided a timestamp and the desired interval the database will be queried
+and the resulting calculation returned back. An added bonus is that the standard sql for dates can be
+used here when passing your parameters.
+
+For example, to return the timestamp representing 5 days for right now:
+
+RWDE::Time->fetch_time({ timestamp => 'now()', interval => "5 days"});
+
+=cut
+
 sub fetch_time {
   my ($self, $params) = @_;
 
@@ -37,12 +47,21 @@ sub fetch_time {
   return $self->fetch_single({ select => $select, query_params => \@query_params });
 }
 
-## @method object fetch_diff($start_stamp, $stop_stamp)
-# (Enter fetch_diff info here)
-# @param stop_stamp  (Enter explanation for param here)
-# @param start_stamp  (Enter explanation for param here)
-# @return (Enter explanation for return value--(Enter explanation for return value here)--here)
-# @todo insert regex for timestamp validation and interval validation...
+=head2 fetch_difference({ start_stamp, stop_stamp })
+
+Fetch the number of days elapsed between two dates. Provided a start and stop date return the number of full days 
+that have passed between the two. An added bonus is that the standard sql for dates can be used here when passing 
+your parameters.
+
+Note the parameters can be formatted as timestamps but the method will cast them to dates anyway. If you are 
+looking for the total elapsed time between two timestamps use fetch_exact_difference.
+
+For example, to return how many days have passed since New Years 2008:
+
+RWDE::Time->fetch_diff({ start_stamp => '01/01/2008 00:00:00', stop_stamp => 'now()' });
+
+=cut
+
 sub fetch_diff {
   my ($self, $params) = @_;
 
@@ -57,17 +76,16 @@ sub fetch_diff {
   return $self->fetch_single({ select => $select, query_params => \@query_params });
 }
 
-## @method object fetch_exact_diff($start_stamp, $stop_stamp)
-# (Enter fetch_exact_diff info here)
-# @param stop_stamp  (Enter explanation for param here)
-# @param start_stamp  (Enter explanation for param here)
-# @return (Enter explanation for return value--(Enter explanation for return value here)--here)
-sub fetch_exact_diff {
+=head2 is_before({ start_stamp, stop_stamp })
+
+Returns true if start_stamp is before stop_stamp, false otherwise
+
+=cut
+
+sub is_before{
   my ($self, $params) = @_;
 
-  if (not defined $$params{start_stamp} or not defined $$params{stop_stamp}) {
-    return;
-  }
+  RWDE::RObject->check_params({ required => ['start_stamp','stop_stamp'], supplied => $params });
 
   #insert regex for timestamp validation and interval validation...
 
@@ -75,24 +93,41 @@ sub fetch_exact_diff {
 
   my @query_params = ($$params{stop_stamp}, $$params{start_stamp});
 
-  return $self->fetch_single({ select => $select, query_params => \@query_params });
+  my $diff =  $self->fetch_single({ select => $select, query_params => \@query_params });
+
+  if ($diff > 0) {
+    return 1;
+  }
+  else{
+    return 0;
+  }
 }
 
-## @method object now()
-# Get the current timestamp. Should be used instead of embedding the call to now from
-# an object to keep the object in the correct state
-# @return (Enter explanation for return value--(Enter explanation for return value here)--here)
+=head2 now()
+
+Fetch the timestamp that currently represents exactly "now".
+
+This is useful for timestamping events within the system, etc.
+
+RWDE::Time->now() would returns a timestamp that conforms to your database default timestamp representation
+
+=cut
+
 sub now {
   my ($self, $params) = @_;
 
   return $self->fetch_time({ timestamp => 'NOW()', interval => 0 });
 }
 
-## @method object days_passed($timestamp)
-# This function returns the number of whole days that have passed since
-# date passed in date parameter.
-# @param timestamp  (Enter explanation for param here)
-# @return (Enter explanation for return value--(Enter explanation for return value here)--here)
+=head2 days_passed
+
+This is a macro to fetch_diff whereby the ending timestamp is always represented by the current date.
+
+This simply returns back the number of days that have passed between the start stamp and the time when
+the method is executed.
+
+=cut
+
 sub days_passed {
   my ($self, $params) = @_;
 
@@ -109,10 +144,15 @@ sub days_passed {
   return $interval;
 }
 
-## @method object format_date($timestamp)
-# This function returns a human viewable date
-# @param timestamp  (Enter explanation for param here)
-# @return (Enter explanation for return value--(Enter explanation for return value here)--here)
+=head2 format_date
+
+Generate a time hash that represents the timestamp parameter.
+
+The method parses through the timestamp and separates each of the timestamp components into a separate key.
+date, time, year, month, and day are all represented within the time hash
+
+=cut
+
 sub format_date {
   my ($self, $params) = @_;
 
@@ -134,10 +174,12 @@ sub format_date {
   return $time;
 }
 
-## @method object format_qdate($timestamp)
-# (Enter format_qdate info here)
-# @param timestamp  (Enter explanation for param here)
-# @return
+=head2 format_qdate
+
+Generate a qdate from the passed in timestamp parameter.
+
+=cut
+
 sub format_qdate {
   my ($self, $params) = @_;
 
@@ -149,10 +191,14 @@ sub format_qdate {
   return ("$$time{month}/$$time{day}/$$time{year}");
 }
 
-## @method object format_rfc($timestamp)
-# This function returns the RFC 822 formatted date - useful for rss where this is required for validation
-# @param timestamp  (Enter explanation for param here)
-# @return Date
+=head2 format_rfc
+
+Generate an RFC 822 formatted date from the passed in timestamp parameter.
+
+RSS requires this specific RFC date formatting
+
+=cut
+
 sub format_rfc {
   my ($self, $params) = @_;
 
@@ -165,10 +211,14 @@ sub format_rfc {
   return $self->fetch_single({ select => $select, query_params => \@query_params });
 }
 
-## @method object format_human($timestamp)
-# This function returns an arbitrary human readable date for use on display pages
-# @param timestamp  (Enter explanation for param here)
-# @return (Enter explanation for return value--(Enter explanation for return value here)--here)
+=head2 format_human
+
+Generate an arbitrary human readable date from the passed in timestamp parameter.
+
+The returned date formating is: YYYY-MM-DD HH12:MI:SS TZ
+
+=cut
+
 sub format_human {
   my ($self, $params) = @_;
 
@@ -181,6 +231,12 @@ sub format_human {
   return $self->fetch_single({ select => $select, query_params => \@query_params });
 }
 
+=head2 extract_dow
+
+Determine the day of week of a given timestamp parameter
+
+=cut
+
 sub extract_dow {
   my ($self, $params) = @_;
   my @required = qw( timestamp );
@@ -192,8 +248,14 @@ sub extract_dow {
   return $self->fetch_single({ select => $select, query_params => \@query_params });
 }
 
-#Take a timestamp from the database and make it look nice for
-#humans to read.  mostly for Postgres which tacks on a numeric timezone.
+=head2 db_format_timestamp
+
+Take a database timestamp and make it look nice for humans to read. 
+
+This is for Postgres database which tack on a numeric timezone.
+
+=cut
+
 sub db_format_timestamp {
   my ($self, $db_timestamp) = @_;
 

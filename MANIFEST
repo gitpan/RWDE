@@ -1,5 +1,6 @@
 Makefile.PL
 MANIFEST
+README
 RWDE.pm
 RWDE/AbstractFactory.pm
 RWDE/CCR.pm
@@ -51,4 +52,3 @@ RWDE/Web/Helper.pm
 RWDE/Web/SCGIadapter.pm
 RWDE/Web/Session.pm
 RWDE/Web/TemplateAdapter.pm
-META.yml                                 Module meta-data (added by MakeMaker)

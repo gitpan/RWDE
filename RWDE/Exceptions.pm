@@ -1,16 +1,7 @@
-package RWDE::BaseException;
-
-use strict;
-use warnings;
-
-use RWDE::DB::DbRegistry;
-
-use base qw(Error);
-
-use overload ('""' => 'stringify');
+package RWDE::Exceptions;
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 515 $ =~ /(\d+)/;
 
 =pod
 
@@ -21,6 +12,24 @@ Exception container file, contains definitions for RWDE Exceptions
 System defined exceptions are based off of the default behaviour of this base exception class
 
 =cut
+
+=head1 Exception class definitions for RWDE
+
+=cut
+
+=head2 RWDE::BaseException()
+    
+=cut
+package RWDE::BaseException;
+
+use strict;
+use warnings;
+
+use RWDE::DB::DbRegistry;
+
+use base qw(Error);
+
+use overload ('""' => 'stringify');
 
 =head2 new()
 
