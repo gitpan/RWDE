@@ -1,5 +1,5 @@
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 512 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 518 $ =~ /(\d+)/;
 
 1;
 __END__
@@ -12,7 +12,7 @@ RWDE - Rapid Web Development Framework
 
 =head1 SYNOPSIS
 
-Subcless the RWDE::Web::AppServer module to supply your handler method
+Subclass the RWDE::Web::AppServer module to supply your handler method
 based on your CGI invocation choice (SCGI or FastCGI) then call the
 Launch() method to start your application server.
 

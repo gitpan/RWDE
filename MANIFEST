@@ -1,4 +1,5 @@
 Makefile.PL
+AUTHORS
 MANIFEST
 README
 RWDE.pm
@@ -18,10 +19,6 @@ RWDE/DB/MemcachedAdapter.pm
 RWDE/DB/MemcachedRegistry.pm
 RWDE/DB/Record.pm
 RWDE/DB/S3.pm
-RWDE/Doxy/ClassData.pm
-RWDE/Doxy/DocGenerator.pm
-RWDE/Doxy/MethodData.pm
-RWDE/Doxy/SCF.pm
 RWDE/Exceptions.pm
 RWDE/Gearman/Client.pm
 RWDE/Gearman/Worker.pm
@@ -52,3 +49,4 @@ RWDE/Web/Helper.pm
 RWDE/Web/SCGIadapter.pm
 RWDE/Web/Session.pm
 RWDE/Web/TemplateAdapter.pm
+META.yml                                 Module meta-data (added by MakeMaker)
