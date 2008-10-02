@@ -1,4 +1,4 @@
-# $Id: Makefile.PL 522 2008-10-02 02:31:25Z damjan $
+# $Id: Makefile.PL 523 2008-10-02 02:50:38Z damjan $
 use ExtUtils::MakeMaker;
 WriteMakefile(
         ABSTRACT => 'RWDE - Rapid Web Development Framework',
@@ -32,7 +32,7 @@ WriteMakefile(
   		    PREOP => 'pod2text lib/RWDE.pm > README',
         },
 #	      EXE_FILES => [ 'bin/tpage', 'bin/ttree' ],
-#	      VERSION => sprintf "%d", q$Revision: 522 $ =~ /(\d+)/,
+#	      VERSION => sprintf "%d", q$Revision: 523 $ =~ /(\d+)/,
 #	      VERSION => `svn info | grep ^Revision` =~ /(\d+)/
       VERSION_FROM => 'lib/RWDE.pm',
 );

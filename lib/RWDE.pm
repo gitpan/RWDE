@@ -1,5 +1,6 @@
+package RWDE;
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 524 $ =~ /(\d+)/;
 
 1;
 __END__
