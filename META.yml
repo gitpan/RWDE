@@ -1,7 +1,7 @@
 --- #YAML:1.0
 name:                RWDE
-version:             518
-abstract:            ~
+version:             522
+abstract:            RWDE - Rapid Web Development Framework
 license:             ~
 generated_by:        ExtUtils::MakeMaker version 6.36
 distribution_type:   module
