@@ -2,14 +2,17 @@ package RWDE::Configuration_content;
 
 use strict;
 
+use Error qw(:try);
 use YAML qw(LoadFile);
+
+use RWDE::Exceptions;
 
 use base qw(RWDE::RObject);
 
 our (@fieldnames, %fields, %static_fields, %modifiable_fields, @static_fieldnames, @modifiable_fieldnames);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 561 $ =~ /(\d+)/;
 
 =pod
 
@@ -27,9 +30,12 @@ sub initialize {
   my ($self, $params) = @_;
 
   # where the config file lives.
-  my $config_file = $$params{config_file};
 
-  my %conf = %{ LoadFile($config_file) };
+  if (not defined $$params{config_file}){
+    throw RWDE::DevelException({ info => "Config file not specified for loading" });
+  }
+
+  my %conf = %{ LoadFile($$params{config_file}) };
 
   $self->{_data} = $conf{Service};
 

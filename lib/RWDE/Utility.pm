@@ -5,10 +5,9 @@ package RWDE::Utility;
 use strict;
 use warnings;
 
-use base qw(RWDE::Logging);
-
+use RWDE::Logging;
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 568 $ =~ /(\d+)/;
 
 =pod  
 
@@ -383,7 +382,7 @@ sub get_provinces_hash {
 sub terminate ($$) {
   my ($self, $msg, $status) = @_;
 
-  $self->syslog_msg('devel', $msg);
+  RWDE::Logging->syslog_msg('devel', $msg);
 
   exit($status);
 }

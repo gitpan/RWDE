@@ -2,11 +2,14 @@ package RWDE::CCR;
 
 use strict;
 use warnings;
+use Error qw(:try);
+
+use RWDE::Exceptions;
 
 use Digest::MD5 qw(md5_hex);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 558 $ =~ /(\d+)/;
 
 =pod
 
@@ -65,15 +68,23 @@ sub fetch_by_id {
 
   elsif (defined $$params{ $term->get_ccr_name() }) {
     $id = $term->ccr_to_id($$params{ $term->get_ccr_name() });
+    throw RWDE::DevelException({ info => "ID hasn't passed the ccr check (check ccr_context): " . $$params{$term->get_ccr_name()} })
+    	unless defined $id;
+
   }
 
   elsif (defined($$params{ $term->get_enc_name() })) {
     $id = $term->decode($$params{ $term->get_enc_name() });
+    throw RWDE::DevelException({ info => "ID hasn't passed the ccr or decode check: " . $$params{ $term->get_enc_name() } })
+    	unless defined $id;
+
   }
 
   else {
     throw RWDE::DevelException({ info => 'Called with no initialization parameter (has to be one of: id, ccr or enc)' });
   }
+
+
 
   return $term->_fetch_by_id({ $term->get_id_name() => $id });
 }
@@ -162,7 +173,7 @@ sub _compute_ccr {
   return chr(ord('A') + $c);
 }
 
-=head2 ccr_to_id($string)
+=head2 compute_security_code($string)
 
 Method to do the math to compute the MD5 checksum for a string, and
 return the last 8 characters to use as a "security" code for
@@ -319,6 +330,28 @@ sub get_enc_name {
   $id_name =~ s/_id/_enc/;
 
   return $id_name;
+}
+
+=head2 compute_md5_rand($string)
+
+Method to do the math to evenly distribute a non-uniformly distributed string input for use as in cases
+where we want to randomly select based on a non-random input (ip address for example).
+  
+=cut
+  
+sub compute_md5_rand {
+  my ($params) = @_;
+
+  #generate hex encoded version
+  my $encoded = md5_hex($$params{string});
+
+  #extract first digit
+  my $digit;
+  if ($encoded =~ m/(\d)/) {
+   $digit = $1;
+  }
+
+  return $digit;
 }
 
 1;

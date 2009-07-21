@@ -14,7 +14,7 @@ use base qw( RWDE::Singleton);
 my $unique_instance;
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
 
 sub get_instance {
   my ($self, $params) = @_;

@@ -23,11 +23,11 @@ use RWDE::RObject;
 
 use base qw(RWDE::Singleton);
 
-our (%dbh, %prepared_transactions, $transaction_connection, $transaction_sequence, $db_settings_ref, $DB_CONFIG, $DB_CONNECTIONS, $impose_transaction);
+our (%dbh, %prepared_transactions, $transaction_connection, $transaction_sequence, $DB_CONFIG, $DB_CONNECTIONS, $impose_transaction);
 our ($unique_instance);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 561 $ =~ /(\d+)/;
 
 ## @method object get_instance()
 # Retrieve the registry instance
@@ -57,7 +57,7 @@ sub initialize {
   $transaction_sequence = 0;
 
   $impose_transaction = undef;
-
+  
   return ();
 }
 
@@ -94,7 +94,15 @@ sub get_dbh {
 sub add_db_settings {
   my ($self, $params) = @_;
 
-  $db_settings_ref = $$params{db_settings};
+  my $db_setting_param = $$params{db_settings};
+
+  if (not defined($db_setting_param) || ref($db_setting_param) ne "ARRAY") {
+    throw RWDE::DevelException({ info => "DB setting supplied undefined or not an array" });    
+  }
+
+  my $connection_name = RWDE::DB::DbRegistry->_get_connection_name($params);
+  
+  push (@{$$DB_CONFIG{$connection_name}{db_settings}}, @$db_setting_param);
 
   return ();
 }
@@ -132,7 +140,7 @@ sub get_db_notifications {
 
 ## @method void destroy_dbh()
 # Tear down and clear (from the registry) the database associated with the database parameter it was invoked with
-# &param db The database name you want to destroy the handle for
+# param db The database name you want to destroy the handle for
 sub destroy_dbh {
   my ($self, $params) = @_;
 
@@ -169,12 +177,24 @@ sub closeDB {
 sub close_all {
   my ($self, $params) = @_;
 
-  foreach my $connection_name (keys %dbh) {
+  foreach my $connection_name (keys %$DB_CONNECTIONS) {
     if ($dbh{$connection_name} and !$dbh{$connection_name}->{InactiveDestroy}) {
       $dbh{$connection_name}->disconnect;
     }
 
     delete $dbh{$connection_name};
+  }
+
+  return ();
+}
+
+## @method void close_all()
+# Release the handles w/o explicitly disconnecting: i.e. on fork
+sub destroy_all {
+  my ($self, $params) = @_;
+
+  foreach my $db_name (keys %$DB_CONNECTIONS) {
+    $self->destroy_dbh({ db => $db_name});
   }
 
   return ();
@@ -289,6 +309,10 @@ sub commit_prepared_transaction {
   my $transaction_name = $$params{transaction_name};
   my $connection       = $prepared_transactions{$transaction_name};
 
+  if (not defined $connection){
+      $connection = $self->_get_connection_name($params);
+  }
+
   if (defined($connection) && defined($transaction_name)) {
 
     #unfortunately DBI does not have a call to support 2pc yet
@@ -319,12 +343,19 @@ sub abort_prepared_transaction {
   my $transaction_name = $$params{transaction_name};
   my $connection       = $prepared_transactions{$transaction_name};
 
+  if (not defined $connection){
+      $connection = $self->_get_connection_name($params);
+  }
+
   if (defined($connection) && defined($transaction_name)) {
 
     #unfortunately DBI does not have a call to support 2pc yet
     if (!defined($dbh{$connection}->do("ROLLBACK PREPARED " . $dbh{$connection}->quote($transaction_name)))) {
       throw RWDE::DevelException({ info => $dbh{$connection}->errstr() });
     }
+  }
+  else {
+    warn 'Either connection or transaction_name not defined';
   }
 
   #clear out transaction
@@ -416,6 +447,17 @@ sub _get_connection_name {
   return $connection_name;
 }
 
+sub get_host {
+  my ($self, $params) = @_;
+
+  my $connection_name = $self->_get_connection_name({ db => $$params{db}});
+
+  my $DB = $$DB_CONFIG{$connection_name};
+
+  return $$DB{db_host};
+}
+
+
 ## @method protected void _connect_db($connection)
 # Create a database connection for the connection_name argument given. If there are any problems an exception will be thrown.
 # Upon success the database connection handle is added to the registry and may be retrieved using "get_dbh".
@@ -442,7 +484,7 @@ sub _connect_db {
   }
 
   # and listen for events to wake us up
-  foreach my $db_setting (@{$db_settings_ref}) {
+  foreach my $db_setting (@{$$DB{db_settings}}) {
     $dbh{$connection_name}->do($db_setting)
       or throw RWDE::DevelException({ info => "failed to set: $db_setting for $connection_name" });
   }

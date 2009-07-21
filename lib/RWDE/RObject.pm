@@ -12,7 +12,7 @@ use base qw(RWDE::Logging);
 
 use vars qw($AUTOLOAD);
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 528 $ =~ /(\d+)/;
 
 our (%_validators);
 
@@ -214,7 +214,7 @@ sub validate_email {
     throw RWDE::DataBadException({ info => 'Email address is too long.  We only allow 100 characters.' });
   }
 
-  my ($email, $domain) = split /@/, $addr;
+  my ($email, $domain) = split /@/, $addr, 2;
 
   throw RWDE::DataBadException(
     {

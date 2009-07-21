@@ -6,7 +6,7 @@ use warnings;
 use RWDE::DB::DbRegistry;
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
 
 ## @method object get_db()
 # (Enter get_db info here)

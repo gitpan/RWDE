@@ -6,17 +6,15 @@ use warnings;
 # Proxy object for getting the specific functionality of a particular object
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 550 $ =~ /(\d+)/;
 
 use Error qw(:try);
-use RWDE::Exceptions;
 
 use RWDE::AbstractFactory;
-
+use RWDE::Configuration;
+use RWDE::Exceptions;
 use RWDE::Web::Helper;
 use RWDE::Web::TemplateAdapter;
-
-use RWDE::Configuration;
 
 use base qw(RWDE::Proxy);
 
@@ -41,7 +39,6 @@ sub execute {
   my $uri = $req->get_uri();
 
   $helper->set_stash({ uri => $uri });
-  $helper->set_stash({ ServerName => $req->get_req->server_name });
 
   # store the current state of the https connection in the stash
   if ($req->is_https()) {
@@ -52,12 +49,18 @@ sub execute {
     $helper->set_stash({ FullServiceAddress => RWDE::Configuration->ServiceAddress });
   }
 
+  # Placing the Service configuration hash for Templates to access. This leaves a few redundant
+  # fields that are injected manually now, will cleanup as the rest is refactored as the templates
+  # will have to use the format Configuration.Debug rather then Debug
+  $helper->set_stash({ Configuration => RWDE::Configuration->get_instance() });
+
   #every possible page controller and template should be able to identify which host they are running on
   #and if they are currently in debug mode - we shouldn't have to do this for each default controller
   $helper->set_stash({ Debug       => RWDE::Configuration->Debug });
+  $helper->set_stash({ ServerName  => $req->get_req->server_name });
   $helper->set_stash({ ServiceHost => RWDE::Configuration->ServiceHost });
 
-  # The template need to insert ServiceAddress for SSL protected forms
+  # The template needs to insert ServiceAddress for SSL protected forms
   $helper->set_stash({ ServiceAddress    => RWDE::Configuration->ServiceAddress });
   $helper->set_stash({ ServiceSSLAddress => RWDE::Configuration->ServiceSSLAddress });
 

@@ -9,7 +9,7 @@ use RWDE::DB::DefaultDB;
 use base qw(RWDE::DB::DefaultDB RWDE::DB::Record);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 516 $ =~ /(\d+)/;
 
 =pod
 

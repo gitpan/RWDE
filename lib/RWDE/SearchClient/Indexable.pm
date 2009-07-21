@@ -9,7 +9,7 @@ use RWDE::Exceptions;
 use RWDE::Search;
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 509 $ =~ /(\d+)/;
 
 =pod
 

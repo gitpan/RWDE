@@ -12,7 +12,7 @@ use base qw(RWDE::DB::Deletable RWDE::DB::Record);
 our ($db, $table, $index, $id, @fieldnames, $ccrcontext, %fields, %static_fields, %modifiable_fields, @static_fieldnames, @modifiable_fieldnames);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 534 $ =~ /(\d+)/;
 
 BEGIN {
   $table = 'workers';
@@ -69,7 +69,6 @@ sub run {
 
   # to avoid contention: release the reference to parent's db handle
   # the handles are shared between parents and children
-  RWDE::DB::DbRegistry->add_db_settings({ db_settings => undef });
   RWDE::DB::DbRegistry->destroy_dbh({ db => $self->get_db() });
 
   my $worker = $self->new();

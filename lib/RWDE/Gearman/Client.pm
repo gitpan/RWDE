@@ -17,7 +17,7 @@ use RWDE::Configuration;
 use RWDE::Exceptions;
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 560 $ =~ /(\d+)/;
 
 ## @cmethod object new()
 # Construct a new Gearman clients
@@ -117,7 +117,7 @@ sub do_task {
   }
 
   #check for error
-  if ((ref $result) =~ m/Exception/i) {
+  if ((ref $result) =~ m/Exception/i || (ref $result) =~ m/Error::Simple/i) {
 
     #result is an exception :/
     $result->throw();

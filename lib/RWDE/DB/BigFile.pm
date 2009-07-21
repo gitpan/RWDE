@@ -5,13 +5,13 @@ use warnings;
 
 use Error qw(:try);
 
+use RWDE::Configuration; 
 use RWDE::Exceptions;
 use RWDE::DB::S3;
 
-use RWDE::Configuration; 
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 554 $ =~ /(\d+)/;
 
 sub s3_put {
 	my ($self, $params) = @_;
@@ -67,7 +67,9 @@ sub Put {
 
 	my $s3 = RWDE::DB::S3->new();
 
-  $s3->putObject(lc(RWDE::Configuration->ServiceName), $$params{key_name}, $$params{content_type}, $$params{content}, $$params{acl});
+        use CGI;
+        $s3->putObject(RWDE::Configuration->S3BucketName, CGI::escape($$params{key_name}), $$params{content_type}, $$params{content}, 
+$$params{acl});
 	
 	return();
 }
@@ -77,7 +79,7 @@ sub Delete {
 
 	my $s3 = RWDE::DB::S3->new();
 
-  $s3->deleteObject(lc(RWDE::Configuration->ServiceName), $$params{key_name});
+  $s3->deleteObject(RWDE::Configuration->S3BucketName, $$params{key_name});
 
 	return();
 }
@@ -87,7 +89,7 @@ sub Get {
 
 	my $s3 = RWDE::DB::S3->new();
 
-  my $response = $s3->getObject(lc(RWDE::Configuration->ServiceName), $$params{key_name});
+  my $response = $s3->getObject(RWDE::Configuration->S3BucketName, $$params{key_name});
 	
 	return $response->content;
 }

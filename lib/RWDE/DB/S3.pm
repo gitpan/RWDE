@@ -32,7 +32,7 @@ use MIME::Base64 qw(encode_base64);
 use RWDE::Configuration; 
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 508 $ =~ /(\d+)/;
 
 ## @cmethod object new()
 # (Enter new info here)

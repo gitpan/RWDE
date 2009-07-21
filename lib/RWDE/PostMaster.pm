@@ -15,7 +15,7 @@ use RWDE::RObject;
 my $unique_instance;
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 527 $ =~ /(\d+)/;
 
 =pod
 
@@ -47,7 +47,6 @@ sub get_instance {
 Initialize an instance of RWDE::Postmaster. This includes pulling some data from the config file in order to find an
 SMTP server and preparing to handle a mail template.
 
-=cut
 =cut
 
 sub initialize {

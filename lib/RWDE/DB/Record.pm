@@ -17,15 +17,15 @@ use Error qw(:try);
 use MIME::Base64;
 use Storable qw(nfreeze thaw);
 
-use RWDE::DB::DbRegistry;
 use RWDE::Exceptions;
+use RWDE::DB::DbRegistry;
 
 use base qw(RWDE::RObject RWDE::DB::Items Exporter);
 
 @RWDE::DB::Record::EXPORT = qw(transaction prepare_transaction);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 555 $ =~ /(\d+)/;
 
 ## @cmethod object new()
 # (Enter new info here)
@@ -54,6 +54,15 @@ sub new() {
   $self->{_ccrcontext}            = ${ $class . "::ccrcontext" };
   $self->{_email}                 = ${ $class . "::email" };
 
+  # Moving static initializers 
+  # my %fields_temp = (%{$self->{_static_fields}}, %{$self->{_modifiable_fields}});
+  # $self->{_fields} = \%fields_temp;
+  # 
+  # @static_fieldnames     = sort keys %static_fields;
+  # @modifiable_fieldnames = sort keys %modifiable_fields;
+  # @fieldnames            = sort keys %fields;
+  #                                              
+
   $self->initialize($params);
 
   return $self;
@@ -75,6 +84,25 @@ sub Create {
 
   return $term;
 }
+
+sub Force_create {
+  my ($self, $params) = @_;
+
+  my $term = $self->new;
+
+  #copy over _all_ field names from params
+  foreach my $field (@{ $term->{_fieldnames} }) {
+    next unless defined($$params{$field});
+    #this circumvents the accessor and hence the check 
+    #whether the field should be allowed to be modified
+    $term->{_data}->{$field} = $$params{$field};
+  }  
+  
+  $term->insert_all();
+
+  return $term;
+}
+
 
 ## @method void initialize()
 # (Enter initialize info here)
@@ -312,9 +340,9 @@ sub create_record {
     if ($self->{_index}) {
 
       # we are using sequences, pull the sequence value we just assigned
-      my $sth = $dbh->prepare("SELECT currval(?)");
-      $sth->execute($self->{_index});
-      my $newid = scalar $sth->fetchrow_array;    # we expect single column, single row here
+      my $sth_local = $dbh->prepare("SELECT currval(?)");
+      $sth_local->execute($self->{_index});
+      my $newid = scalar $sth_local->fetchrow_array;    # we expect single column, single row here
 
       # load to populate the fields with default values in the db
       my $created = $self->fetch_by_id({ $self->{_id} => $newid });
@@ -362,14 +390,12 @@ sub _fetch_by_id {
   throw RWDE::DataNotFoundException({ info => $self . ' No id was specified to lookup' })
     unless defined $id;
 
-  my $term = $self->fetch_one(
+  return $self->fetch_one(
     {
       query        => $self->{_id} . " = ?",
-      query_params => [$id],
+      query_params => [ $id ],
     }
   );
-
-  return $term;
 }
 
 sub fetch_one_by {
@@ -377,6 +403,7 @@ sub fetch_one_by {
 
   throw RWDE::DevelException({ info => ' No params specified for lookup' })
     unless defined $params;
+    
   my @query;
   my @query_params;
 
@@ -536,6 +563,85 @@ sub update_all {
   $self->delete_cache();
 
   return ();
+}
+
+
+
+sub insert_all {
+  my ($self, $params) = @_;
+
+  my @fields = ();    # list of fields to insert
+  my @values;          # corresponding values
+  my $table = $self->{_table};    # the table for the object
+
+  #RWDE::DB::DbRegistry->db_check_transaction({ db => $self->{_db} });
+
+  local ($") = ",";    #"
+
+  foreach my $field (@{ $self->{_fieldnames} }) {
+    next unless exists($self->{_data}->{$field});
+
+    my $value = $self->normalize($field, $self->{_data}->{$field});
+
+    next unless defined($value);
+
+    push(@fields, $field);
+    push(@values, $value);
+  }
+
+  my $dbh = $self->get_dbh();
+
+  my $sth;
+  if ((@fields > 0) && (@values > 0)) {
+    $sth = $dbh->prepare("INSERT INTO $table (@fields) VALUES (@values)");
+  }
+  elsif ($self->{_id} && $self->{_index}) {
+    $sth = $dbh->prepare("INSERT INTO $table (" . $self->{_id} . ") VALUES (DEFAULT)");
+  }
+  else {
+    throw RWDE::DevelException({ info => 'Attempt to create a record without any values (default or otherwise)' });
+  }
+
+  # Check if the id is present in the object, if not we'll get it from the autoincrement 
+  my $id = $self->{_data}->{ $self->{_id} };
+
+  if ($sth and $sth->execute) {
+    if ($self->{_index} and not defined $id) {
+
+      # we are using sequences, pull the sequence value we just assigned
+      my $sth_local = $dbh->prepare("SELECT currval(?)");
+      $sth_local->execute($self->{_index});
+      my $newid = scalar $sth_local->fetchrow_array;    # we expect single column, single row here
+
+      # load to populate the fields with default values in the db
+      my $created = $self->fetch_by_id({ $self->{_id} => $newid });
+
+      $self->copy_record($created);
+    }
+    elsif (defined $id){
+      my $created = $self->fetch_by_id({ $self->{_id} => $id });
+
+      $self->copy_record($created);
+    }
+    else{
+      throw RWDE::DevelException({ info => 'Id not defined or composite id not defined properly. Unable to fetch the newly inserted row from the db.' });
+    }
+  }
+  else {
+    my $error = $dbh->errstr();
+
+    # some error...
+    if ($error =~ m/duplicate/i) {
+
+      # duplicate ID
+      throw RWDE::DataDuplicateException({ info => 'Duplicate information requested for create' });
+    }
+    else {
+      throw RWDE::DevelException({ info => $error });
+    }
+  }
+
+  return $self->get_id();
 }
 
 ## @method object get_data()
@@ -763,7 +869,7 @@ sub transaction(&) {
     catch Error with {
       my $ex = shift;
 
-      #syslog_msg('info', $ex);
+      #RWDE::Logger->syslog_msg('info', "In transaction: " . $ex);
 
       RWDE::DB::DbRegistry->abort_transaction();
       $ex->throw();
@@ -811,9 +917,10 @@ sub prepare_transaction(&) {
   catch Error with {
     my $ex = shift;
 
-    RWDE::Logger->syslog_msg('info', $ex);
+    RWDE::Logger->syslog_msg('info', 'In prepare: ' . $ex);
 
     RWDE::DB::DbRegistry->abort_transaction();
+
     $ex->throw();
   };
 
@@ -849,11 +956,11 @@ sub commit_record_temp {
     throw RWDE::DevelException({ info => $self . 'This record is not involved in a temporary transaction.' });
   }
 
-  RWDE::DB::DbRegistry->commit_prepared_transaction({ transaction_name => $transaction_name });
+  RWDE::DB::DbRegistry->commit_prepared_transaction({ transaction_name => $transaction_name, db => $self->get_db()  });
 
   delete $self->{_data}->{transaction_name} if ref $self;
 
-  return ();
+  return 1;
 }
 
 ## @method void abort_record_temp()

@@ -13,15 +13,16 @@ use RWDE::Exceptions;
 use base qw(RWDE::Logging);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 564 $ =~ /(\d+)/;
 
 sub Start {
   my ($self, $params) = @_;
 
   # Process command line options:
   #  -d turn on debugging (remains in foreground)
+  #  -c number of children to run
   my %opt = ();
-  getopts('d:s:m:n:', \%opt);
+  getopts('d:s:m:n:c:', \%opt);
 
   RWDE::Logger->set_debug()
     if exists($opt{d});
@@ -34,11 +35,32 @@ sub Start {
 
   $runnable->setup(\%opt);
 
-  $self->daemonize()
-    unless $self->is_debug;
+  my $num_of_children = defined $opt{c} ? $opt{c} : 1;
 
-  $runnable->start();
+  if ($self->is_debug){
+    $runnable->start();
+  }
+  else{
+    for(my $i=1; $i<= $num_of_children; $i++) {
+      my $pid;
+      next if $pid = fork;    # Parent goes to next server.
+      if (not defined $pid){
+        $self->syslog_msg('info', "Fork failed: $!");
+        die "fork failed: $!";
+      }
 
+      # From here on, we're in the child.  Do whatever the
+      # child has to do...  
+      $self->syslog_msg('info', 'Runnable starting: ' . ref $runnable);
+
+      $self->daemonize();
+
+      $runnable->start();
+
+      exit;  # Ends the child process.
+    }
+
+  }
   return ();
 }
 

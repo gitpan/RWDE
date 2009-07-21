@@ -25,12 +25,12 @@ use RWDE::Time;
 use RWDE::Scheduler::SchedulerWorker;
 use RWDE::Scheduler::Pending_action;
 
-use base qw(RWDE::DB::Deletable RWDE::DB::Record RWDE::Runnable);
+use base qw(RWDE::DB::DefaultDB RWDE::DB::Deletable RWDE::DB::Record RWDE::Runnable);
 
 our ($db, $table, $index, $id, @fieldnames, $ccrcontext, %fields, %static_fields, %modifiable_fields, @static_fieldnames, @modifiable_fieldnames);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 535 $ =~ /(\d+)/;
 
 BEGIN {
   $table = 'schedulers';
@@ -59,18 +59,9 @@ BEGIN {
   %fields = (%static_fields, %modifiable_fields);
 
   @static_fieldnames     = sort keys %static_fields;
-  @modifiable_fieldnames = (sort keys %modifiable_fields);
+  @modifiable_fieldnames = sort keys %modifiable_fields;
   @fieldnames            = sort keys %fields;
 
-}
-
-## @method object get_db()
-# (Enter get_db info here)
-# @return
-sub get_db {
-  my ($self, $params) = @_;
-
-  return 'default';
 }
 
 sub fetch_by_name {
@@ -313,9 +304,9 @@ sub setup {
 
 sub start {
   my ($self, $params) = @_;
-
+  
   # set a listener for  DB notifications
-  RWDE::DB::DbRegistry::add_db_settings({ db_settings => ['LISTEN pending'], });
+  RWDE::DB::DbRegistry->add_db_settings({ db => $self->get_db, db_settings => ['LISTEN pending'], });
 
   $self->syslog_msg('info', "Starting Scheduler:: name: " . $self->scheduler_name . " sleeptime: " . $self->{sleeptime} . " workers: " . $self->{workers});
 

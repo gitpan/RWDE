@@ -21,7 +21,7 @@ use RWDE::Exceptions;
 use base qw(RWDE::Runnable);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 556 $ =~ /(\d+)/;
 
 sub new {
   my ($proto, $params) = @_;
@@ -87,7 +87,7 @@ sub start {
 
   my $gear = $self->get_gear();
 
- $self->syslog_msg('info', 'Worker ' . $self . 'Starting...');
+  $self->syslog_msg('info', 'Worker starting: ' . (ref $self));
 
   while (1) {
     $gear->work();

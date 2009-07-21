@@ -19,7 +19,7 @@ use RWDE::Exceptions;
 use base qw(RWDE::DB::DefaultDB);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 572 $ =~ /(\d+)/;
 
 # Session values are retrieved and set using the session hash key names,
 # just as if you were accessing the hash directly.
@@ -56,6 +56,11 @@ sub new {
   return $self;
 }
 
+sub get_ccrcontext {
+	my ($self, $params) = @_;
+	
+	return 7;
+}
 ## @method void remove()
 # (Enter remove info here)
 sub remove {
@@ -66,7 +71,23 @@ sub remove {
 
   tied(%{ $self->{_session} })->delete();    # session failure ignored here.
 
-  return ();
+  return;
+}
+
+sub set_limited {
+	my ($self, $params) = @_;
+	
+	$self->{_limited} = 1;
+	
+	return;
+}
+
+sub set_not_limited {
+	my ($self, $params) = @_;
+	
+	$self->{_limited} = undef;	
+	
+	return;
 }
 
 ## @method void verbose()
@@ -78,7 +99,7 @@ sub verbose {
   $self->{verbose} = $v || 0;
   warn "session $self verbose => $v\n";
 
-  return ();
+  return;
 }
 
 ## @method object keys()
@@ -87,7 +108,13 @@ sub verbose {
 sub keys {
   my $self = shift;
 
-  return CORE::keys %{ $self->{_session} };
+  #if we are in a limitted mode
+  if (defined $self->{_limited}){
+    return CORE::keys %{ $self->{_session}->{limited_storage} };
+  }
+  else{
+    return CORE::keys %{ $self->{_session} };
+  }
 }
 
 ## @method object retrieve($session_id)
@@ -132,7 +159,7 @@ sub dump {
     }
   }
 
-  return ();
+  return;
 }
 
 # use autoload to set and get the fields of the session.  setting a field
@@ -147,17 +174,35 @@ use vars qw($AUTOLOAD);
 sub AUTOLOAD {
   my $self = shift;
 
+	if (not defined $self->{_session}){
+		throw RWDE::DevelException({ info => 'No session found. '})
+	}
+
   my $name = $AUTOLOAD;
   $name =~ s/.*://;    # strip fully-qualified portion
 
-  if (@_) {            # given value, so set it.
-    $self->{_session}->{$name} = $_[0];
-    $self->{_session}->{timestamp} = time;
-    warn "session $self->{_session}->{_session_id} set $name => $_[0]\n"
-      if $self->{verbose};
-  }
+	#if we are in a limitted mode
+	if (defined $self->{_limited}){
 
-  return $self->{_session}->{$name};
+	  if (@_) {            # given value, so set it.
+	    $self->{_session}->{limited_storage}->{$name} = $_[0];	
+	    $self->{_session}->{timestamp} = time;
+	    warn "session $self->{_session}->{_session_id} set $name => $_[0]\n"
+	      if $self->{verbose};
+	  }
+	  return $self->{_session}->{limited_storage}->{$name};	
+	}	
+	
+	else{
+	  if (@_) {            # given value, so set it.
+
+	    $self->{_session}->{$name} = $_[0];
+	    $self->{_session}->{timestamp} = time;
+	    warn "session $self->{_session}->{_session_id} set $name => $_[0]\n"
+	      if $self->{verbose};
+	  }		
+	  return $self->{_session}->{$name};		
+	}
 }
 
 ## @cmethod void DESTROY()

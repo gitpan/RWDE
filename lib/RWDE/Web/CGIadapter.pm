@@ -5,7 +5,7 @@
 # $Id: CGIadapter.pm 446 2008-05-07 17:45:44Z damjan $
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 567 $ =~ /(\d+)/;
 
 ## @class RWDE::Web::CGIadapter
 # (Enter RWDE::Web::CGIadapter info here)
@@ -17,7 +17,38 @@ use warnings;
 use Error qw(:try);
 use RWDE::Exceptions;
 
+use RWDE::CCR;
+
 use base qw(RWDE::Logging);
+
+## @method object new()
+# create the blessed object and call the subclass's initialize() method
+# @return
+sub new {
+  my ($proto, $params) = @_;
+
+  my $class = ref($proto) || $proto;
+  my $self = { accumulator => {} };
+
+  bless $self, $class;
+
+	$self->initialize($params);
+
+  return $self;
+}
+
+## @method object initialize()
+# perform any initializations necessary for this type of connection.
+# MUST be overridden in subclass.
+# @return
+sub initialize {
+  my ($self, $params) = @_;
+
+  throw RWDE::DevelException({ info => 'initialize() method not overridden in '.ref($self) });
+
+  return;
+}
+
 
 ## @method object get_req()
 # (Enter get_req info here)
@@ -168,6 +199,67 @@ sub set_cookie {
   return ();
 }
 
+## @method void add_header(header,$value)
+# Add a header to the accumulator.  "known" headers are 'type',
+# 'status', 'expires', and 'cookie' as per CGI.pm's header() method.
+# Only cookie can be set multiple times for multiple cookies.
+# Headers are delivered when print_header() method is called.
+# @param header name of header
+# @param value value of header
+# @return 
+sub add_header {
+  my ($self, $params) = @_;
+
+  if ($self->{header}) {
+    throw RWDE::DevelException({ info => 'Header was already sent to the client.' });
+  }
+
+  my $header = '-'.lc($$params{header});
+  my $value = $$params{value};
+
+  my $ac =  $self->{accumulator};
+
+  if ($header eq '-cookie') {
+    $ac->{$header} = [] unless exists $ac->{$header};
+    push @{$ac->{$header}},$value;
+  } elsif (exists $ac->{$header}) {
+    throw RWDE::DevelException({ info => "Header $header was already set." });
+  } else {
+    $ac->{$header} = $value;
+  }
+
+  return;
+}
+
+## @method void add_cookie_header($cookie)
+# Add the cookie created using the params passed. see CGI.pm for cookie()
+# params.  print_header() method will actually output the cookies.
+# @param cookie hashref passed directly to CGI.pm's cookie() method
+# @return true for success, undef if too late to add headers
+sub add_cookie_header {
+  my ($self, $params) = @_;
+
+  if ($self->{header}) {
+    return;			# too late to add headers
+  }
+
+  my $cookie = $self->get_req->cookie(%$params);
+
+  $self->add_header({header => 'cookie', value => $cookie});
+}
+
+## @method object get_cookies()
+# @return hash ref of key/values for all cookies passed from browser
+sub get_cookies {
+  my ($self) = @_;
+
+  my $cgi = $self->get_req();
+
+  my %cookies = map { $_ => $cgi->cookie($_) } $cgi->cookie();
+
+  return \%cookies;
+}
+
 ## @method void print_header($filename, $mimetype, $pagetype)
 # (Enter print_header info here)
 # @param filename  (Enter explanation for param here)
@@ -182,32 +274,32 @@ sub print_header {
 
   my $pagetype = $$params{pagetype};
 
-  # unless (defined $pagetype) {
-  #   throw RWDE::DevelException({ info => 'Pagetype is not defined' });
-  # }
+  unless (defined $pagetype) {
+    
+     #once all pagetypes are well defined, we want to throw exception
+     #meanwhile just return, as we have no action to perform - avoids uninitialized
+     #comparison warns
+     return;
+     #throw RWDE::DevelException({ info => 'Pagetype is not defined' });
+  }
+
 
   #if this is a standard webserver type
   if ($pagetype eq 'rwp') {
-    print $self->get_req->header(
-      -content_type => 'text/html; charset=utf-8',
-      -pragma       => 'no-cache'
-    );
+    $self->add_header({header => 'type', value => 'text/html; charset=utf-8'});
+    $self->add_header({header => 'pragma', value => 'no-cache'});
     $self->{header} = 'true';
   }
 
   elsif ($pagetype eq 'ttml') {
-    print $self->get_req->header(
-      -content_type => 'text/html; charset=utf-8',
-      -pragma       => 'no-cache'
-    );
+    $self->add_header({header => 'type', value => 'text/html; charset=utf-8'});
+    $self->add_header({header => 'pragma', value => 'no-cache'});
     $self->{header} = 'true';
   }
 
   elsif ($pagetype eq 'rss') {
-    print $self->get_req->header(
-      -content_type => 'text/xml; charset=utf-8',
-      -pragma       => 'no-cache'
-    );
+    $self->add_header({header => 'type', value => 'text/xml; charset=utf-8'});
+    $self->add_header({header => 'pragma', value => 'no-cache'});
     $self->{header} = 'true';
   }
 
@@ -222,12 +314,12 @@ sub print_header {
       return ();
     }
 
-    print $self->get_req->header(
-      -type       => $$params{mimetype},
-      -attachment => $$params{filename}
-    );
+    $self->add_header({header => 'type', value => $$params{mimetype}});
+    $self->add_header({header => 'attachment', value => $$params{filename}});
     $self->{header} = 'true';
   }
+
+  print $self->get_req->header($self->{accumulator}) if $self->{header};
 
   return ();
 }
@@ -260,6 +352,14 @@ sub forward {
   # 303 - See Other
   return ();
 }
+
+sub not_found {
+  my ($self, $params) = @_;
+  $self->{header}  = 'true';  
+  print $self->get_req->header(-status => '404 Not Found');  
+  return();
+}
+
 
 ## @method void auth_required()
 # (Enter auth_required info here)
@@ -326,4 +426,3 @@ sub get_contenttype {
 }
 
 1;
-

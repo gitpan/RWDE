@@ -7,7 +7,7 @@ use RWDE::Gearman::Client;
 
 use vars qw($AUTOLOAD);
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 536 $ =~ /(\d+)/;
 
 =pod
 
@@ -42,6 +42,16 @@ sub AUTOLOAD {
   $$params{method} = $1 .'::' . $1 .'::'.$method;
   
   return RWDE::Gearman::Client->Do_task($params);
+}
+
+=head2 DESTROY()
+
+Do nothing. This is here to avoid sending the DESTROY request over RPC
+
+=cut
+
+sub DESTROY {
+
 }
 
 1;

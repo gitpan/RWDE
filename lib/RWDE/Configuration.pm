@@ -13,7 +13,7 @@ our (@fieldnames, %fields, %static_fields, %modifiable_fields, @static_fieldname
 
 use vars qw($AUTOLOAD);
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 507 $ =~ /(\d+)/;
 
 =pod
 

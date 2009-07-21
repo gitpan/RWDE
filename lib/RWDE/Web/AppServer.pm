@@ -11,7 +11,7 @@ use RWDE::Logger;
 use base qw(Net::Server::PreFork);
 
 use vars qw($VERSION);
-$VERSION = sprintf "%d", q$Revision: 522 $ =~ /(\d+)/;
+$VERSION = sprintf "%d", q$Revision: 531 $ =~ /(\d+)/;
 
 $SIG{__WARN__} = \&errorHandler;
 
